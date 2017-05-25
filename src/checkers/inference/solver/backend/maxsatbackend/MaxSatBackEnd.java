@@ -1,7 +1,5 @@
 package checkers.inference.solver.backend.maxsatbackend;
 
-import org.checkerframework.framework.type.QualifierHierarchy;
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
@@ -17,6 +15,7 @@ import java.util.Set;
 import javax.annotation.processing.ProcessingEnvironment;
 import javax.lang.model.element.AnnotationMirror;
 
+import org.checkerframework.framework.type.QualifierHierarchy;
 import org.sat4j.core.VecInt;
 import org.sat4j.maxsat.WeightedMaxSatDecorator;
 
@@ -78,7 +77,7 @@ public class MaxSatBackEnd extends BackEnd<VecInt[], VecInt[]> {
         this.convertAll();
         this.serializationEnd = System.currentTimeMillis();
 
-        generateWellForm(hardClauses);
+        generateOneHotClauses(hardClauses);
 
         if (shouldOutputCNF()) {
             buildCNF();
@@ -106,7 +105,7 @@ public class MaxSatBackEnd extends BackEnd<VecInt[], VecInt[]> {
             long serializationTime = serializationEnd - serializationStart;
 
             StatisticRecorder.recordSingleSerializationTime(serializationTime);
-            StatisticRecorder.recordSingleSolving(solvingTime);
+            StatisticRecorder.recordSingleSolvingTime(solvingTime);
 
             if (isSatisfiable) {
                 result = decode(solver.model());
@@ -163,7 +162,7 @@ public class MaxSatBackEnd extends BackEnd<VecInt[], VecInt[]> {
      *
      * @param clauses
      */
-    protected void generateWellForm(List<VecInt> clauses) {
+    protected void generateOneHotClauses(List<VecInt> clauses) {
         for (Integer id : this.varSlotIds) {
             int[] leastOneIsTrue = new int[lattice.numTypes];
             for (Integer i : lattice.intToType.keySet()) {

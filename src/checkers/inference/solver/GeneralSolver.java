@@ -1,8 +1,5 @@
 package checkers.inference.solver;
 
-import org.checkerframework.framework.type.QualifierHierarchy;
-import org.checkerframework.javacutil.ErrorReporter;
-
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -20,6 +17,9 @@ import java.util.concurrent.Future;
 
 import javax.annotation.processing.ProcessingEnvironment;
 import javax.lang.model.element.AnnotationMirror;
+
+import org.checkerframework.framework.type.QualifierHierarchy;
+import org.checkerframework.javacutil.ErrorReporter;
 
 import checkers.inference.DefaultInferenceSolution;
 import checkers.inference.InferenceSolution;
@@ -91,7 +91,7 @@ public class GeneralSolver implements InferenceSolver {
         }
 
         if (solution == null)
-            ErrorReporter.errorAbort("null solution detected!");
+            ErrorReporter.errorAbort("Null solution detected!");
 
         if (collectStatistic) {
             Map<String, Integer> modelRecord = recordSlotConstraintSize(slots, constraints);
@@ -128,7 +128,7 @@ public class GeneralSolver implements InferenceSolver {
         }
 
         if (useGraph == null || useGraph.equals(Constants.TRUE)) {
-            // Configure use of constraint graph.
+            // Configure use of constraint graph. Default is true.
             this.useGraph = true;
         } else {
             this.useGraph = false;

@@ -1,8 +1,5 @@
 package dataflow.solvers.general;
 
-import org.checkerframework.framework.type.QualifierHierarchy;
-import org.checkerframework.javacutil.AnnotationUtils;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -13,6 +10,9 @@ import java.util.Set;
 
 import javax.annotation.processing.ProcessingEnvironment;
 import javax.lang.model.element.AnnotationMirror;
+
+import org.checkerframework.framework.type.QualifierHierarchy;
+import org.checkerframework.javacutil.AnnotationUtils;
 
 import checkers.inference.DefaultInferenceSolution;
 import checkers.inference.InferenceMain;
@@ -150,7 +150,7 @@ public class DataflowGeneralSolver extends GeneralSolver {
         if (!useGraph) {
             useGraph = true;
             InferenceMain.getInstance().logger
-                    .warning("DataflowConstraintSolver: Don't use graph to solve constraints will "
+                    .warning("DataflowConstraintSolver: Solving constraint without graph will "
                             + "cause wrong answers in Dataflow type system. Modified solver argument \"useGraph\" to true.");
         }
     }

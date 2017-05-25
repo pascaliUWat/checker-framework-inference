@@ -1,8 +1,5 @@
 package checkers.inference.solver.frontend;
 
-import org.checkerframework.framework.type.QualifierHierarchy;
-import org.checkerframework.javacutil.AnnotationUtils;
-
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -10,6 +7,9 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.lang.model.element.AnnotationMirror;
+
+import org.checkerframework.framework.type.QualifierHierarchy;
+import org.checkerframework.javacutil.AnnotationUtils;
 
 /**
  * Lattice class contains necessary information about qualifier hierarchy for
@@ -26,7 +26,7 @@ public class Lattice {
     public Map<AnnotationMirror, Collection<AnnotationMirror>> incomparableType = AnnotationUtils.createAnnotationMap();
     public Map<AnnotationMirror, Integer> typeToInt = AnnotationUtils.createAnnotationMap();
     public Map<Integer, AnnotationMirror> intToType = new HashMap<Integer, AnnotationMirror>();
-    protected Set<? extends AnnotationMirror> allTypes;
+    private Set<? extends AnnotationMirror> allTypes;
     public AnnotationMirror top;
     public AnnotationMirror bottom;
     public int numTypes;

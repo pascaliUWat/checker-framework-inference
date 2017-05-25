@@ -1,7 +1,5 @@
 package checkers.inference.solver.backend.maxsatbackend;
 
-import org.checkerframework.framework.type.QualifierHierarchy;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -17,6 +15,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import javax.annotation.processing.ProcessingEnvironment;
 import javax.lang.model.element.AnnotationMirror;
 
+import org.checkerframework.framework.type.QualifierHierarchy;
 import org.sat4j.core.VecInt;
 
 import checkers.inference.model.Constraint;
@@ -35,6 +34,7 @@ import checkers.inference.solver.util.StatisticRecorder.StatisticKey;
  */
 public class LingelingBackEnd extends MaxSatBackEnd {
 
+    // Lingeling binary executable file should be located at JSR308/lingeling/lingeling.
     private final String lingeling = System.getenv().get("JSR308") + "/lingeling/lingeling";
     // record cnf integers in clauses. lingeling solver give the answer for all
     // the integers from 1 to the largest one. Some of them may be not in the
@@ -60,7 +60,7 @@ public class LingelingBackEnd extends MaxSatBackEnd {
         this.convertAll();
         this.serializationEnd = System.currentTimeMillis();
 
-        generateWellForm(hardClauses);
+        generateOneHotClauses(hardClauses);
         buildCNF();
         collectVals();
         recordData();
@@ -81,7 +81,7 @@ public class LingelingBackEnd extends MaxSatBackEnd {
         long serializationTime = serializationEnd - serializationStart;
 
         StatisticRecorder.recordSingleSerializationTime(serializationTime);
-        StatisticRecorder.recordSingleSolving(solvingTime);
+        StatisticRecorder.recordSingleSolvingTime(solvingTime);
 
         return result;
     }
@@ -178,6 +178,4 @@ public class LingelingBackEnd extends MaxSatBackEnd {
         StatisticRecorder.record(StatisticKey.CNF_CLAUSE_SIZE, (long) totalClauses);
         StatisticRecorder.record(StatisticKey.CNF_VARIABLE_SIZE, (long) totalVariable);
     }
-
-
 }

@@ -71,6 +71,8 @@ public class PrintUtils {
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
+
+        System.out.println("Result has been written to: " + writePath);
     }
 
     private static StringBuilder buildStatistic(Map<StatisticKey, Long> statistic,
@@ -153,7 +155,6 @@ public class PrintUtils {
         StringBuilder statisticsTest = buildStatistic(statistic, modelRecord, backEndType, useGraph,
                 solveInParallel);
         String writePath = new File(new File("").getAbsolutePath()).toString() + "/statistic.txt";
-        System.out.println("Statistic has been written to: " + writePath);
         try {
             PrintWriter pw = new PrintWriter(writePath);
             pw.write(statisticsTest.toString());
@@ -161,6 +162,8 @@ public class PrintUtils {
         } catch (Exception e) {
             e.printStackTrace();
         }
+
+        System.out.println("Statistic has been written to: " + writePath);
     }
 
     private static void buildStatisticText(Map<StatisticKey, Long> statistic,

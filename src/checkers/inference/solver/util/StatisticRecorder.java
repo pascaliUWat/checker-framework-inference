@@ -36,8 +36,8 @@ public class StatisticRecorder {
     }
 
     // Use atomic integer when back ends run in parallel.
-    public static AtomicInteger satSerializationTime = new AtomicInteger(0);
-    public static AtomicInteger satSolvingTime = new AtomicInteger(0);
+    public final static AtomicInteger satSerializationTime = new AtomicInteger(0);
+    public final static AtomicInteger satSolvingTime = new AtomicInteger(0);
     private final static Map<StatisticKey, Long> statistic = new HashMap<StatisticKey, Long>();
 
     static {
@@ -65,7 +65,7 @@ public class StatisticRecorder {
         satSerializationTime.addAndGet((int) value);
     }
 
-    public static synchronized void recordSingleSolving(long value) {
+    public static synchronized void recordSingleSolvingTime(long value) {
         satSolvingTime.addAndGet((int) value);
     }
 

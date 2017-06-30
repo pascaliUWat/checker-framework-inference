@@ -1,14 +1,10 @@
 package dataflow.solvers.classic;
 
-import org.checkerframework.framework.type.QualifierHierarchy;
-import org.checkerframework.javacutil.AnnotationUtils;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.TreeSet;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -19,9 +15,11 @@ import javax.annotation.processing.ProcessingEnvironment;
 import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.util.Elements;
 
+import org.checkerframework.framework.type.QualifierHierarchy;
+import org.checkerframework.javacutil.AnnotationUtils;
+
 import checkers.inference.InferenceSolution;
 import checkers.inference.InferenceSolver;
-import checkers.inference.model.ConstantSlot;
 import checkers.inference.model.Constraint;
 import checkers.inference.model.Slot;
 import checkers.inference.solver.constraintgraph.ConstraintGraph;
@@ -97,23 +95,6 @@ public class DataflowSolver implements InferenceSolver {
             solutions.add(future.get());
         }
         return solutions;
-    }
-
-    private Collection<String> getDatatypesUsed(Collection<Slot> slots) {
-        Set<String> types = new TreeSet<>();
-        for (Slot slot : slots) {
-            if (slot instanceof ConstantSlot) {
-                ConstantSlot constantSlot = (ConstantSlot) slot;
-                AnnotationMirror anno = constantSlot.getValue();
-                if (AnnotationUtils.areSameIgnoringValues(anno, DATAFLOW)) {
-                    String[] dataflowValues = DataflowUtils.getTypeNames(anno);
-                    for (String dataflowValue : dataflowValues) {
-                        types.add(dataflowValue);
-                    }
-                }
-            }
-        }
-        return types;
     }
 
     protected DataflowSerializer getSerializer(String datatype, boolean isRoot) {

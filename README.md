@@ -106,9 +106,12 @@ Available options are [INFER, TYPECHECK, ROUNDTRIP, ROUNDTRIP_TYPECHECK]
 
 * `--checker`
 Specifies which checker to run.
-The two most supported checkers at the moment are
-`checkers.ostrusted.OsTrustedChecker` and
-`checkers.tainting.TaintingChecker`
+The three most supported checkers at the moment are
+`ostrusted.OsTrustedChecker`,
+`checkers.tainting.TaintingChecker` and 
+`dataflow.DataflowChecker`.
+
+  You can find details of `dataflow.DataflowChecker` in [README.dataflow](src/dataflow/README.md) 
 
 * `--solver`
 Which solver to use on the constraints.

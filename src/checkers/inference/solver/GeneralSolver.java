@@ -90,8 +90,9 @@ public class GeneralSolver implements InferenceSolver {
             solution = solve();
         }
 
-        if (solution == null)
+        if (solution == null) {
             ErrorReporter.errorAbort("Null solution detected!");
+        }
 
         if (collectStatistic) {
             Map<String, Integer> modelRecord = recordSlotConstraintSize(slots, constraints);
@@ -104,7 +105,7 @@ public class GeneralSolver implements InferenceSolver {
     }
 
     /**
-     * This method configures following arguments backEndType, useGraph,
+     * This method configures following arguments: backEndType, useGraph,
      * solveInParallel, and collectStatistic
      * 
      * @param configuration
@@ -171,8 +172,8 @@ public class GeneralSolver implements InferenceSolver {
      * This method creates a ConstraintSerializer, which can deliver the
      * constraint/slot to the real serializer. If a costume serialization logic
      * is needed, user can have a subclass of ConstraintSerializer, override the
-     * serialize method with costume logic, and then override this method with
-     * returning the instance of new subclass.
+     * serialize method with the costume logic, and then override this method
+     * with returning the instance of new subclass.
      * 
      * @param backEndType
      * @param lattice

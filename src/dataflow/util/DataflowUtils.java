@@ -1,9 +1,5 @@
 package dataflow.util;
 
-import org.checkerframework.framework.type.AnnotatedTypeMirror;
-import org.checkerframework.framework.util.AnnotationBuilder;
-import org.checkerframework.javacutil.AnnotationUtils;
-
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -12,25 +8,22 @@ import javax.annotation.processing.ProcessingEnvironment;
 import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.type.TypeMirror;
 
+import org.checkerframework.framework.type.AnnotatedTypeMirror;
+import org.checkerframework.framework.util.AnnotationBuilder;
+import org.checkerframework.javacutil.AnnotationUtils;
+import org.checkerframework.javacutil.ErrorReporter;
+
 import com.sun.source.tree.LiteralTree;
 
 import dataflow.qual.DataFlow;
 
+/**
+ * Utility class for Dataflow type system.
+ * 
+ * @author jianchu
+ *
+ */
 public class DataflowUtils {
-
-    private static String[] getDataflowValue(AnnotationMirror type, String valueName) {
-        List<String> allTypesList = AnnotationUtils.getElementValueArray(type, valueName, String.class,
-                true);
-        // types in this list is
-        // org.checkerframework.framework.util.AnnotationBuilder.
-        String[] allTypesInArray = new String[allTypesList.size()];
-        int i = 0;
-        for (Object o : allTypesList) {
-            allTypesInArray[i] = o.toString();
-            i++;
-        }
-        return allTypesInArray;
-    }
 
     public static String[] getTypeNames(AnnotationMirror type) {
         return getDataflowValue(type, "typeNames");
@@ -40,15 +33,24 @@ public class DataflowUtils {
         return getDataflowValue(type, "typeNameRoots");
     }
 
+    private static String[] getDataflowValue(AnnotationMirror type, String valueName) {
+        List<String> allTypesList = AnnotationUtils.getElementValueArray(type, valueName, String.class,
+                true);
+        // types in this list is org.checkerframework.framework.util.AnnotationBuilder.
+        String[] allTypesInArray = new String[allTypesList.size()];
+        int i = 0;
+        for (Object o : allTypesList) {
+            allTypesInArray[i] = o.toString();
+            i++;
+        }
+        return allTypesInArray;
+    }
+
     public static AnnotationMirror createDataflowAnnotationForByte(String[] dataType,
             ProcessingEnvironment processingEnv) {
         AnnotationBuilder builder = new AnnotationBuilder(processingEnv, DataFlow.class);
         builder.setValue("typeNameRoots", dataType);
         return builder.build();
-    }
-
-    public static String[] convert(String... typeName) {
-        return typeName;
     }
 
     private static AnnotationMirror createDataflowAnnotation(final Set<String> datatypes,
@@ -84,7 +86,6 @@ public class DataflowUtils {
 
     public static AnnotationMirror createDataflowAnnotationWithoutName(Set<String> roots,
             ProcessingEnvironment processingEnv) {
-
         AnnotationBuilder builder = new AnnotationBuilder(processingEnv, DataFlow.class);
         return createDataflowAnnotationWithoutName(roots, builder);
 
@@ -100,7 +101,6 @@ public class DataflowUtils {
     public static AnnotationMirror createDataflowAnnotationWithRoots(Set<String> datatypes,
             Set<String> datatypesRoots, ProcessingEnvironment processingEnv) {
         AnnotationBuilder builder = new AnnotationBuilder(processingEnv, DataFlow.class);
-
         return createDataflowAnnotationWithRoots(datatypes, datatypesRoots, builder);
     }
 
@@ -153,11 +153,9 @@ public class DataflowUtils {
         return dataFlowType;
     }
 
-    // TODO :doc
     public static AnnotationMirror generateDataflowAnnoFromLiteral(LiteralTree node,
             ProcessingEnvironment processingEnv) {
         String datatypeInArray[] = { "" };
-        // String datatypeInArray[] = null;
         switch (node.getKind()) {
         case STRING_LITERAL:
             datatypeInArray = convert(String.class.toString().split(" ")[1]);
@@ -181,16 +179,18 @@ public class DataflowUtils {
             datatypeInArray = convert(char.class.toString());
             break;
         case NULL_LITERAL:
-            // JLTODO: this results in "" for null, which is not very useful.
-            // We had discussed two modes: not including null, or making it
-            // explicit.
+            // Null literal wouldn't be passed here.
             break;
         default:
-            // JLTODO: Raise an error?!
+            ErrorReporter.errorAbort("Unknown literal tree: " + node.getKind().toString());
             break;
         }
         AnnotationMirror dataFlowType = createDataflowAnnotation(datatypeInArray, processingEnv);
         return dataFlowType;
+    }
+
+    public static String[] convert(String... typeName) {
+        return typeName;
     }
 
     public static AnnotationMirror createDataflowAnnotation(String typeName,

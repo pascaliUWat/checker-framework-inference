@@ -28,6 +28,12 @@ import checkers.inference.solver.constraintgraph.Vertex;
 import dataflow.qual.DataFlow;
 import dataflow.util.DataflowUtils;
 
+/**
+ * A solver for dataflow type system that is independent from GeneralSolver.
+ * 
+ * @author jianchu
+ *
+ */
 public class DataflowSolver implements InferenceSolver {
 
     protected AnnotationMirror DATAFLOW;

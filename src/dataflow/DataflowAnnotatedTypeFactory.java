@@ -1,19 +1,5 @@
 package dataflow;
 
-import org.checkerframework.common.basetype.BaseAnnotatedTypeFactory;
-import org.checkerframework.common.basetype.BaseTypeChecker;
-import org.checkerframework.framework.type.AnnotatedTypeMirror;
-import org.checkerframework.framework.type.AnnotatedTypeMirror.AnnotatedDeclaredType;
-import org.checkerframework.framework.type.AnnotatedTypeMirror.AnnotatedPrimitiveType;
-import org.checkerframework.framework.type.QualifierHierarchy;
-import org.checkerframework.framework.type.treeannotator.ListTreeAnnotator;
-import org.checkerframework.framework.type.treeannotator.TreeAnnotator;
-import org.checkerframework.framework.util.GraphQualifierHierarchy;
-import org.checkerframework.framework.util.MultiGraphQualifierHierarchy.MultiGraphFactory;
-import org.checkerframework.javacutil.AnnotationUtils;
-import org.checkerframework.javacutil.ElementUtils;
-import org.checkerframework.javacutil.TreeUtils;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -27,6 +13,20 @@ import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.type.PrimitiveType;
 import javax.lang.model.type.TypeMirror;
+
+import org.checkerframework.common.basetype.BaseAnnotatedTypeFactory;
+import org.checkerframework.common.basetype.BaseTypeChecker;
+import org.checkerframework.framework.type.AnnotatedTypeMirror;
+import org.checkerframework.framework.type.AnnotatedTypeMirror.AnnotatedDeclaredType;
+import org.checkerframework.framework.type.AnnotatedTypeMirror.AnnotatedPrimitiveType;
+import org.checkerframework.framework.type.QualifierHierarchy;
+import org.checkerframework.framework.type.treeannotator.ListTreeAnnotator;
+import org.checkerframework.framework.type.treeannotator.TreeAnnotator;
+import org.checkerframework.framework.util.GraphQualifierHierarchy;
+import org.checkerframework.framework.util.MultiGraphQualifierHierarchy.MultiGraphFactory;
+import org.checkerframework.javacutil.AnnotationUtils;
+import org.checkerframework.javacutil.ElementUtils;
+import org.checkerframework.javacutil.TreeUtils;
 
 import com.sun.source.tree.LiteralTree;
 import com.sun.source.tree.MethodInvocationTree;
@@ -49,6 +49,10 @@ import dataflow.util.DataflowUtils;
 public class DataflowAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
 
     protected final AnnotationMirror DATAFLOW, DATAFLOWBOTTOM, DATAFLOWTOP;
+    /**
+     * For each Java type is present in the target program, typeNamesMap maps
+     * String of the type to the TypeMirror.
+     */
     private final Map<String, TypeMirror> typeNamesMap = new HashMap<String, TypeMirror>();
 
     public DataflowAnnotatedTypeFactory(BaseTypeChecker checker) {
@@ -69,6 +73,11 @@ public class DataflowAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
         return new DataFlowQualifierHierarchy(factory, DATAFLOWBOTTOM);
     }
 
+    /**
+     * This method handles autoboxing for primitive type.
+     * For statements, Integer i = 3;
+     * The annotation for i should be @DataFlow(typeNames = {"Integer"}).
+     */
     @Override
     public AnnotatedDeclaredType getBoxedType(AnnotatedPrimitiveType type) {
         TypeElement typeElt = types.boxedClass(type.getUnderlyingType());
@@ -79,6 +88,11 @@ public class DataflowAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
         return dt;
     }
 
+    /**
+     * This method handles unboxing for reference type.
+     * For statements, int i = new Integer(3);
+     * The annotation for i should be @DataFlow(typeNames = {"int"}).
+     */
     @Override
     public AnnotatedPrimitiveType getUnboxedType(AnnotatedDeclaredType type)
             throws IllegalArgumentException {
@@ -97,6 +111,14 @@ public class DataflowAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
             super(f, bottom);
         }
 
+        /**
+         * This method checks whether rhs is subtype of lhs. rhs and lhs are
+         * both Dataflow types with typeNameRoots argument.
+         * 
+         * @param rhs
+         * @param lhs
+         * @return true is rhs is subtype of lhs, otherwise return false.
+         */
         private boolean isSubtypeWithRoots(AnnotationMirror rhs, AnnotationMirror lhs) {
 
             Set<String> rTypeNamesSet = new HashSet<String>(Arrays.asList(DataflowUtils
@@ -126,6 +148,16 @@ public class DataflowAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
             }
         }
 
+        /**
+         * This method checks whether rhs is subtype of lhs. rhs and lhs are
+         * both Dataflow types without typeNameRoots argument. Currently this
+         * method is not used, but we can use it for a lightweight dataflow type
+         * system. (One without typeNameRoots argument).
+         * 
+         * @param rhs
+         * @param lhs
+         * @return true is rhs is subtype of lhs, otherwise return false.
+         */
         private boolean isSubtypeWithoutRoots(AnnotationMirror rhs, AnnotationMirror lhs) {
             Set<String> rTypeNamesSet = new HashSet<String>(Arrays.asList(DataflowUtils
                     .getTypeNames(rhs)));

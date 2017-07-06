@@ -116,9 +116,8 @@ Which solver to use on the constraints.
 * `--targetclasspath`
 The classpath that is required by target program.
 
-`checkers.inference.solver.PropagationSolver` is the only real solver
+`checkers.inference.solver.PropagationSolver` and `checkers.inference.solver.GeneralSolver` are real solvers
 at the moment.
-TODO: update
 
 Omiting the solver will create an output that numbers all of the
 annotation positions in the program.
@@ -129,4 +128,43 @@ constraints generated.
 
 Other options can be found by `./scripts/inference --help`.
 
+## Use of Generic solver
+
+Generic solver is designed for solving type constraints from arbitrary type system.
+
+You can invoke generic solver through:
+
+````
+--solver checkers.inference.solver.GeneralSolver
+````
+
+There are a couple of arguments that generic solver can accept:
+
+* `backEndType`
+Specifies what back end is going to use. 
+
+  At this moment, there are three available back ends:
+
+  * `MaxSAT`: Encodes constraints as Max-SAT problem and use Sat4j library to solve.
+
+  * `Lingeling`: Encodes constraints as SAT problem and use Lingeling solver to solve.
+  
+  * `LogiQL`: Encodes constraints as statements of LogiQL language and use LogicBlox to solve.
+  
+  `MaxSAT` back end is used by default.
+
+* `useGraph`
+Specifies whether to separate constraints into multiple components through constraint graph and solve them respectively. The default value is true.
+
+* `solveInParallel`
+If constraints are separated by constraint graph, this arguments indicates whether to solve the components in parallel (multithreading). The default value is true. 
+
+* `collectStatistic`
+Specifies whether to collect statistic with respect to timing, size of constraints, size of encoding, etc. The default value is false.
+
+For example, generic solver can be invoked through following command:
+
+````
+./scripts/inference --log-level FINE --mode ROUNDTRIP --checker ostrusted.OsTrustedChecker --solver checkers.inference.solver.GeneralSolver --solverArgs backEndType=MaxSat,useGraph=true,collectStatistic=true,solveInParallel=false -afud /path/to/Annotation/File/Utilities/output/directory [List of files]
+````
 

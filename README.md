@@ -82,7 +82,7 @@ is the script used to run inference.
 Example:
 
 ````
-./scripts/inference --log-level FINE --mode ROUNDTRIP --checker ostrusted.OsTrustedChecker --solver checkers.inference.solver.PropagationSolver -afud /path/to/Annotation/File/Utilities/output/directory [List of files]
+./scripts/inference --logLevel=FINE --mode ROUNDTRIP --checker ostrusted.OsTrustedChecker --solver checkers.inference.solver.PropagationSolver -afud /path/to/Annotation/File/Utilities/output/directory [List of files]
 ````
 
 There are a couple of required options:
@@ -131,7 +131,7 @@ constraints generated.
 
 Other options can be found by `./scripts/inference --help`.
 
-## Use of Generic solver
+## Use of General solver
 
 Generic solver is designed for solving type constraints from arbitrary type system.
 
@@ -168,6 +168,6 @@ Specifies whether to collect statistic with respect to timing, size of constrain
 For example, generic solver can be invoked through following command:
 
 ````
-./scripts/inference --log-level FINE --mode ROUNDTRIP --checker ostrusted.OsTrustedChecker --solver checkers.inference.solver.GeneralSolver --solverArgs backEndType=MaxSat,useGraph=true,collectStatistic=true,solveInParallel=false -afud /path/to/Annotation/File/Utilities/output/directory [List of files]
+./scripts/inference --mode INFER --checker ostrusted.OsTrustedChecker --solver checkers.inference.solver.GeneralSolver --solverArgs backEndType=MaxSAT,useGraph=true,collectStatistic=true,solveInParallel=false [List of files]
 ````
 

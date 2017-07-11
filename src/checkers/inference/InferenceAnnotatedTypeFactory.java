@@ -6,7 +6,6 @@ import org.checkerframework.framework.flow.CFAnalysis;
 import org.checkerframework.framework.flow.CFStore;
 import org.checkerframework.framework.flow.CFTransfer;
 import org.checkerframework.framework.flow.CFValue;
-import org.checkerframework.framework.qual.TypeUseLocation;
 import org.checkerframework.framework.type.AnnotatedTypeMirror;
 import org.checkerframework.framework.type.AnnotatedTypeMirror.AnnotatedDeclaredType;
 import org.checkerframework.framework.type.AnnotatedTypeMirror.AnnotatedExecutableType;
@@ -425,7 +424,7 @@ public class InferenceAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
 
         // determine substitution for method type variables
         final Map<TypeVariable, AnnotatedTypeMirror> typeVarMapping =
-                AnnotatedTypes.findTypeArguments(processingEnv, this, expressionTree, methodElement, methodType);
+                AnnotatedTypes.findTypeArguments(processingEnv, this.realTypeFactory, expressionTree, methodElement, methodType);
 
         if (typeVarMapping.isEmpty()) {
             return Pair.<AnnotatedExecutableType, List<AnnotatedTypeMirror>>of(methodType, new LinkedList<AnnotatedTypeMirror>());
@@ -584,7 +583,5 @@ public class InferenceAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
         this.variableAnnotator.clearTreeInfo();
         super.setRoot(root);
     }
-
-
 }
 

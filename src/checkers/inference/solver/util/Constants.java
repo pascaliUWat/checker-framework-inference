@@ -18,8 +18,8 @@ public class Constants {
     public static final String LINGELING = "checkers.inference.solver.backend.maxsatbackend.Lingeling";
     public static final String LOGIQL = "checkers.inference.solver.backend.logiqlbackend.LogiQL";
 
-    public static final String TRUE = "true";
-    public static final String FALSE = "false";
+    public static final String TRUE = Boolean.TRUE.toString();
+    public static final String FALSE = Boolean.FALSE.toString();
 
     public static final String CONSTANT_SLOT = "ConstantSlot";
     public static final String VARIABLE_SLOT = "VariableSlot";

@@ -1,6 +1,6 @@
 package checkers.inference.solver.util;
 
-import java.util.HashMap;
+import java.util.EnumMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -38,27 +38,12 @@ public class StatisticRecorder {
     // Use atomic integer when back ends run in parallel.
     public final static AtomicInteger satSerializationTime = new AtomicInteger(0);
     public final static AtomicInteger satSolvingTime = new AtomicInteger(0);
-    private final static Map<StatisticKey, Long> statistic = new HashMap<StatisticKey, Long>();
+    private final static Map<StatisticKey, Long> statistic = new EnumMap<StatisticKey, Long>(StatisticKey.class);
 
     static {
-        /* Initialize basic Info */
-        statistic.put(StatisticKey.SLOTS_SIZE, (long) 0);
-        statistic.put(StatisticKey.CONSTRAINT_SIZE, (long) 0);
-        statistic.put(StatisticKey.GRAPH_SIZE, (long) 0);
-        statistic.put(StatisticKey.CNF_VARIABLE_SIZE, (long) 0);
-        statistic.put(StatisticKey.CNF_CLAUSE_SIZE, (long) 0);
-        statistic.put(StatisticKey.LOGIQL_PREDICATE_SIZE, (long) 0);
-        statistic.put(StatisticKey.LOGIQL_DATA_SIZE, (long) 0);
-        statistic.put(StatisticKey.ANNOTATOIN_SIZE, (long) 0);
-
-        /* Initialize timing Info */
-        statistic.put(StatisticKey.GRAPH_GENERATION_TIME, (long) 0);
-        statistic.put(StatisticKey.OVERALL_PARALLEL_SOLVING_TIME, (long) 0);
-        statistic.put(StatisticKey.OVERALL_SEQUENTIAL_SOLVING_TIME, (long) 0);
-        statistic.put(StatisticKey.OVERALL_NOGRAPH_SOLVING_TIME, (long) 0);
-        statistic.put(StatisticKey.SAT_SERIALIZATION_TIME, (long) 0);
-        statistic.put(StatisticKey.SAT_SOLVING_TIME, (long) 0);
-        statistic.put(StatisticKey.LOGIQL_SERIALIZATION_TIME, (long) 0);
+        for (StatisticKey key : StatisticKey.values()) {
+            statistic.put(key, (long) 0);
+        }
     }
 
     public static synchronized void recordSingleSerializationTime(long value) {

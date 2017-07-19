@@ -118,7 +118,7 @@ public class GeneralSolver implements InferenceSolver {
         final String collectStatistic = configuration.get(Constants.COLLECT_STATISTIC);
 
         if (backEndName == null || backEndName.equals("MaxSAT")) {
-            // Configure back end type.
+            // Configure back end type. Default is MaxSAT.
             this.backEndType = Constants.MAX_SAT;
         } else if (backEndName.equals("Lingeling")) {
             this.backEndType = Constants.LINGELING;
@@ -135,7 +135,7 @@ public class GeneralSolver implements InferenceSolver {
             this.useGraph = false;
         }
 
-        if (this.backEndType.equals("checkers.inference.solver.backend.logiqlbackend.LogiQL")) {
+        if (this.backEndType.equals(Constants.LOGIQL)) {
             // Configure solving strategy.
             this.solveInParallel = false;
         } else if (solveInParallel == null || solveInParallel.equals(Constants.TRUE)) {
@@ -252,7 +252,7 @@ public class GeneralSolver implements InferenceSolver {
                     qualHierarchy, processingEnvironment, lattice, defaultSerializer));
         }
         // Clear constraint graph in order to save memory.
-        constraintGraph = null;
+        this.constraintGraph = null;
         return mergeSolution(solve(backEnds));
     }
 

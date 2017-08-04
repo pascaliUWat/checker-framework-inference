@@ -201,9 +201,6 @@ public class DataflowAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
                     processingEnv);
             TypeMirror tm = type.getUnderlyingType();
             typeNamesMap.put(tm.toString(), tm);
-            if (tm.getKind() == TypeKind.ARRAY) {
-                replaceArrayComponentATM((AnnotatedArrayType) type);
-            }
             type.replaceAnnotation(dataFlowType);
             return super.visitNewArray(node, type);
         }
@@ -237,6 +234,9 @@ public class DataflowAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
                 AnnotationMirror dataFlowType = DataflowUtils.genereateDataflowAnnoFromByteCode(type,
                         processingEnv);
                 TypeMirror tm = type.getUnderlyingType();
+                if (tm.getKind() == TypeKind.ARRAY) {
+                    replaceArrayComponentATM((AnnotatedArrayType) type);
+                }
                 typeNamesMap.put(tm.toString(), tm);
                 type.replaceAnnotation(dataFlowType);
             }

@@ -129,7 +129,7 @@ public class GraphBuilder {
                 if ((edge instanceof SubtypeEdge) && current.equals(edge.to)) {
                     continue;
                 }
-                Vertex next = edge.getToVertex();
+                Vertex next = current.equals(edge.getToVertex()) ? edge.getFromVertex() : edge.getToVertex();
                 constantPathConstraints.add(edge.getConstraint());
                 if (!visited.contains(next)) {
                     if (next.isConstant()) {

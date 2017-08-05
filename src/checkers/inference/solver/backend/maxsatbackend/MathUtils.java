@@ -1,4 +1,4 @@
-package checkers.inference.solver.util;
+package checkers.inference.solver.backend.maxsatbackend;
 
 import javax.lang.model.element.AnnotationMirror;
 

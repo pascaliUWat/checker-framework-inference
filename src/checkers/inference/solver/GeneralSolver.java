@@ -30,12 +30,16 @@ import checkers.inference.model.Serializer;
 import checkers.inference.model.Slot;
 import checkers.inference.model.VariableSlot;
 import checkers.inference.solver.backend.BackEnd;
+import checkers.inference.solver.backend.BackEndType;
+import checkers.inference.solver.backend.BackEndType.BackEndTypeEnum;
 import checkers.inference.solver.constraintgraph.ConstraintGraph;
 import checkers.inference.solver.constraintgraph.GraphBuilder;
 import checkers.inference.solver.frontend.ConstraintSerializer;
 import checkers.inference.solver.frontend.Lattice;
 import checkers.inference.solver.frontend.TwoQualifiersLattice;
 import checkers.inference.solver.util.Constants;
+import checkers.inference.solver.util.Constants.SolverArg;
+import checkers.inference.solver.util.Constants.slotType;
 import checkers.inference.solver.util.PrintUtils;
 import checkers.inference.solver.util.StatisticRecorder;
 import checkers.inference.solver.util.StatisticRecorder.StatisticKey;
@@ -52,7 +56,7 @@ import checkers.inference.solver.util.StatisticRecorder.StatisticKey;
 
 public class GeneralSolver implements InferenceSolver {
 
-    protected String backEndType;
+    protected BackEndType backEndType;
     protected boolean useGraph;
     private boolean solveInParallel;
     private boolean collectStatistic;
@@ -78,9 +82,9 @@ public class GeneralSolver implements InferenceSolver {
         Serializer<?, ?> defaultSerializer = createSerializer(backEndType, lattice);
 
         if (useGraph) {
-            this.graphBuildingStart = System.currentTimeMillis();
-            this.constraintGraph = generateGraph(slots, constraints, processingEnvironment);
-            this.graphBuildingEnd = System.currentTimeMillis();
+            graphBuildingStart = System.currentTimeMillis();
+            constraintGraph = generateGraph(slots, constraints, processingEnvironment);
+            graphBuildingEnd = System.currentTimeMillis();
             StatisticRecorder.record(StatisticKey.GRAPH_GENERATION_TIME, (graphBuildingEnd - graphBuildingStart));
             solution = graphSolve(constraintGraph, configuration, slots, constraints, qualHierarchy,
                     processingEnvironment, defaultSerializer);
@@ -112,21 +116,12 @@ public class GeneralSolver implements InferenceSolver {
      */
     private void configure(final Map<String, String> configuration) {
 
-        final String backEndName = configuration.get(Constants.BACK_END_TYPE);
-        final String useGraph = configuration.get(Constants.USE_GRAPH);
-        final String solveInParallel = configuration.get(Constants.SOLVE_IN_PARALLEL);
-        final String collectStatistic = configuration.get(Constants.COLLECT_STATISTIC);
+        final String backEndName = configuration.get(SolverArg.backEndType.name());
+        final String useGraph = configuration.get(SolverArg.useGraph.name());
+        final String solveInParallel = configuration.get(SolverArg.solveInParallel.name());
+        final String collectStatistic = configuration.get(SolverArg.collectStatistic.name());
 
-        if (backEndName == null || backEndName.equals("MaxSAT")) {
-            // Configure back end type. Default is MaxSAT.
-            this.backEndType = Constants.MAX_SAT;
-        } else if (backEndName.equals("Lingeling")) {
-            this.backEndType = Constants.LINGELING;
-        } else if (backEndName.equals("LogiQL")) {
-            this.backEndType = Constants.LOGIQL;
-        } else {
-            ErrorReporter.errorAbort("Back end \"" + backEndName + "\" has not been implemented yet.");
-        }
+        backEndType = new BackEndType(backEndName);
 
         if (useGraph == null || useGraph.equals(Constants.TRUE)) {
             // Configure use of constraint graph. Default is true.
@@ -135,7 +130,7 @@ public class GeneralSolver implements InferenceSolver {
             this.useGraph = false;
         }
 
-        if (this.backEndType.equals(Constants.LOGIQL)) {
+        if (backEndType.getBackEndType().equals(BackEndTypeEnum.LogiQL)) {
             // Configure solving strategy.
             this.solveInParallel = false;
         } else if (solveInParallel == null || solveInParallel.equals(Constants.TRUE)) {
@@ -153,16 +148,16 @@ public class GeneralSolver implements InferenceSolver {
 
         // Sanitize the configuration if it needs.
         sanitizeConfiguration();
-        System.out.println("Configuration: \nback end type: " + this.backEndType + "; \nuseGraph: "
+        System.out.println("Configuration: \nback end type: " + this.backEndType.getSimpleName() + "; \nuseGraph: "
                 + this.useGraph + "; \nsolveInParallel: " + this.solveInParallel + ".");
     }
 
     protected void configureLattice(QualifierHierarchy qualHierarchy) {
-        this.lattice = new Lattice(qualHierarchy);
+        lattice = new Lattice(qualHierarchy);
         lattice.configure();
     }
 
-    protected TwoQualifiersLattice configureLatticeFor2(AnnotationMirror top, AnnotationMirror bottom) {
+    protected TwoQualifiersLattice createTwoQualifierLattice(AnnotationMirror top, AnnotationMirror bottom) {
         TwoQualifiersLattice latticeFor2 = new TwoQualifiersLattice(top, bottom);
         latticeFor2.configure();
         return latticeFor2;
@@ -179,7 +174,7 @@ public class GeneralSolver implements InferenceSolver {
      * @param lattice
      * @return A deliverer Serializer.
      */
-    protected Serializer<?, ?> createSerializer(String backEndType, Lattice lattice) {
+    protected Serializer<?, ?> createSerializer(BackEndType backEndType, Lattice lattice) {
         return new ConstraintSerializer<>(backEndType, lattice);
     }
 
@@ -190,7 +185,7 @@ public class GeneralSolver implements InferenceSolver {
         return constraintGraph;
     }
 
-    protected BackEnd<?, ?> createBackEnd(String backEndType, Map<String, String> configuration,
+    protected BackEnd<?, ?> createBackEnd(BackEndType backEndType, Map<String, String> configuration,
             Collection<Slot> slots, Collection<Constraint> constraints,
             QualifierHierarchy qualHierarchy, ProcessingEnvironment processingEnvironment,
             Lattice lattice, Serializer<?, ?> defaultSerializer) {
@@ -198,7 +193,7 @@ public class GeneralSolver implements InferenceSolver {
         BackEnd<?, ?> backEnd = null;
 
         try {
-            Class<?> backEndClass = Class.forName(backEndType + "BackEnd");
+            Class<?> backEndClass = Class.forName(backEndType.getFullyQualifiedName() + "BackEnd");
             Constructor<?> cons = backEndClass.getConstructor(Map.class, Collection.class,
                     Collection.class, QualifierHierarchy.class, ProcessingEnvironment.class,
                     Serializer.class, Lattice.class);
@@ -268,7 +263,7 @@ public class GeneralSolver implements InferenceSolver {
         List<Map<Integer, AnnotationMirror>> inferenceSolutionMaps = new LinkedList<Map<Integer, AnnotationMirror>>();
 
         if (backEnds.size() > 0) {
-            if (this.solveInParallel) {
+            if (solveInParallel) {
                 try {
                     inferenceSolutionMaps = solveInparallel(backEnds);
                 } catch (InterruptedException | ExecutionException e) {
@@ -382,17 +377,17 @@ public class GeneralSolver implements InferenceSolver {
 
         for (Slot slot : slots) {
             if (slot instanceof ConstantSlot) {
-                if (!modelMap.containsKey(Constants.CONSTANT_SLOT)) {
-                    modelMap.put(Constants.CONSTANT_SLOT, 1);
+                if (!modelMap.containsKey(slotType.ConstantSlot.name())) {
+                    modelMap.put(slotType.ConstantSlot.name(), 1);
                 } else {
-                    modelMap.put(Constants.CONSTANT_SLOT, modelMap.get(Constants.CONSTANT_SLOT) + 1);
+                    modelMap.put(slotType.ConstantSlot.name(), modelMap.get(slotType.ConstantSlot.name()) + 1);
                 }
 
             } else if (slot instanceof VariableSlot) {
-                if (!modelMap.containsKey(Constants.VARIABLE_SLOT)) {
-                    modelMap.put(Constants.VARIABLE_SLOT, 1);
+                if (!modelMap.containsKey(slotType.VariableSlot.name())) {
+                    modelMap.put(slotType.VariableSlot.name(), 1);
                 } else {
-                    modelMap.put(Constants.VARIABLE_SLOT, modelMap.get(Constants.VARIABLE_SLOT) + 1);
+                    modelMap.put(slotType.VariableSlot.name(), modelMap.get(slotType.VariableSlot.name()) + 1);
                 }
             }
         }

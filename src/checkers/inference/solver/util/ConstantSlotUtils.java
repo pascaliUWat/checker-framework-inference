@@ -20,7 +20,7 @@ import checkers.inference.solver.frontend.Lattice;
  * @author jianchu
  *
  */
-public class ConstantUtils {
+public class ConstantSlotUtils {
 
     public static boolean checkConstant(ConstantSlot constant1, ConstantSlot constant2,
             Constraint constraint, Lattice lattice) {

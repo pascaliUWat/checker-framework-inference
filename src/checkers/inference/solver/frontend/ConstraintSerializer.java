@@ -15,7 +15,8 @@ import checkers.inference.model.RefinementVariableSlot;
 import checkers.inference.model.Serializer;
 import checkers.inference.model.SubtypeConstraint;
 import checkers.inference.model.VariableSlot;
-import checkers.inference.solver.util.Constants;
+import checkers.inference.solver.backend.BackEndType;
+import checkers.inference.solver.backend.BackEndType.BackEndTypeEnum;
 
 /**
  * ConstraintSerializer is a deliverer that can delegate each type of
@@ -34,13 +35,15 @@ public class ConstraintSerializer<S, T> implements Serializer<S, T> {
     private Serializer<S, T> realSerializer;
 
     @SuppressWarnings("unchecked")
-    public ConstraintSerializer(String backEndType, Lattice lattice) {
+    public ConstraintSerializer(BackEndType backEndType, Lattice lattice) {
         try {
-            if (backEndType.equals(Constants.LINGELING)) {
+            String backEndPath = backEndType.getFullyQualifiedName();
+            if (backEndType.getBackEndType().equals(BackEndTypeEnum.Lingeling)) {
                 // Lingeling back ends also uses Max-SAT serializer.
-                backEndType = Constants.MAX_SAT;
+                backEndPath = backEndType.getFullyQualifiedName(BackEndType.BackEndTypeEnum.MaxSAT);
             }
-            Class<?> serializerClass = Class.forName(backEndType + "Serializer");
+            System.out.println("PATH!!!+" + backEndPath);
+            Class<?> serializerClass = Class.forName(backEndPath + "Serializer");
             Constructor<?> cons = serializerClass.getConstructor(Lattice.class);
             realSerializer = (Serializer<S, T>) cons.newInstance(lattice);
         } catch (Exception e) {

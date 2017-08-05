@@ -8,6 +8,8 @@ import java.util.Map;
 import javax.lang.model.element.AnnotationMirror;
 
 import checkers.inference.InferenceMain;
+import checkers.inference.solver.backend.BackEndType;
+import checkers.inference.solver.backend.BackEndType.BackEndTypeEnum;
 import checkers.inference.solver.util.StatisticRecorder.StatisticKey;
 
 /**
@@ -76,7 +78,7 @@ public class PrintUtils {
     }
 
     private static StringBuilder buildStatistic(Map<StatisticKey, Long> statistic,
-            Map<String, Integer> modelRecord, String backEndType, boolean useGraph,
+            Map<String, Integer> modelRecord, BackEndType backEndType, boolean useGraph,
             boolean solveInParallel) {
 
         StringBuilder statisticsText = new StringBuilder();
@@ -93,10 +95,11 @@ public class PrintUtils {
             buildStatisticText(statistic, basicInfo, StatisticKey.GRAPH_SIZE);
         }
 
-        if (backEndType.equals(Constants.MAX_SAT) || backEndType.equals(Constants.LINGELING)) {
+        if (backEndType.getBackEndType().equals(BackEndTypeEnum.MaxSAT)
+                || backEndType.getBackEndType().equals(BackEndTypeEnum.Lingeling)) {
             buildStatisticText(statistic, basicInfo, StatisticKey.CNF_VARIABLE_SIZE);
             buildStatisticText(statistic, basicInfo, StatisticKey.CNF_CLAUSE_SIZE);
-        } else if (backEndType.equals(Constants.LOGIQL)) {
+        } else if (backEndType.getBackEndType().equals(BackEndTypeEnum.LogiQL)) {
             buildStatisticText(statistic, basicInfo, StatisticKey.LOGIQL_PREDICATE_SIZE);
             buildStatisticText(statistic, basicInfo, StatisticKey.LOGIQL_DATA_SIZE);
         }
@@ -114,12 +117,13 @@ public class PrintUtils {
             buildStatisticText(statistic, timingInfo, StatisticKey.OVERALL_NOGRAPH_SOLVING_TIME);
         }
 
-        if (backEndType.equals(Constants.MAX_SAT) || backEndType.equals(Constants.LINGELING)) {
+        if (backEndType.getBackEndType().equals(BackEndTypeEnum.MaxSAT)
+                || backEndType.getBackEndType().equals(BackEndTypeEnum.Lingeling)) {
             buildStatisticText(StatisticKey.SAT_SERIALIZATION_TIME.toString().toLowerCase(),
                     StatisticRecorder.satSerializationTime.get(), timingInfo);
             buildStatisticText(StatisticKey.SAT_SOLVING_TIME.toString().toLowerCase(),
                     StatisticRecorder.satSolvingTime.get(), timingInfo);
-        } else if (backEndType.equals(Constants.LOGIQL)) {
+        } else if (backEndType.getBackEndType().equals(BackEndTypeEnum.Lingeling)) {
             buildStatisticText(statistic, timingInfo, StatisticKey.LOGIQL_SERIALIZATION_TIME);
             buildStatisticText(statistic, timingInfo, StatisticKey.LOGIQL_SOLVING_TIME);
         }
@@ -139,7 +143,7 @@ public class PrintUtils {
      * @param solveInParallel
      */
     public static void printStatistic(Map<StatisticKey, Long> statistic,
-            Map<String, Integer> modelRecord, String backEndType, boolean useGraph,
+            Map<String, Integer> modelRecord, BackEndType backEndType, boolean useGraph,
             boolean solveInParallel) {
         StringBuilder statisticsTest = buildStatistic(statistic, modelRecord, backEndType, useGraph,
                 solveInParallel);
@@ -150,7 +154,7 @@ public class PrintUtils {
     }
 
     public static void writeStatistic(Map<StatisticKey, Long> statistic,
-            Map<String, Integer> modelRecord, String backEndType, boolean useGraph,
+            Map<String, Integer> modelRecord, BackEndType backEndType, boolean useGraph,
             boolean solveInParallel) {
         StringBuilder statisticsTest = buildStatistic(statistic, modelRecord, backEndType, useGraph,
                 solveInParallel);

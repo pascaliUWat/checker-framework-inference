@@ -42,7 +42,6 @@ public class ConstraintSerializer<S, T> implements Serializer<S, T> {
                 // Lingeling back ends also uses Max-SAT serializer.
                 backEndPath = backEndType.getFullyQualifiedName(BackEndType.BackEndTypeEnum.MaxSAT);
             }
-            System.out.println("PATH!!!+" + backEndPath);
             Class<?> serializerClass = Class.forName(backEndPath + "Serializer");
             Constructor<?> cons = serializerClass.getConstructor(Lattice.class);
             realSerializer = (Serializer<S, T>) cons.newInstance(lattice);

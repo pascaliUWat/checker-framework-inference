@@ -31,7 +31,6 @@ import checkers.inference.model.Slot;
 import checkers.inference.model.VariableSlot;
 import checkers.inference.solver.backend.BackEnd;
 import checkers.inference.solver.backend.BackEndType;
-import checkers.inference.solver.backend.BackEndType.BackEndTypeEnum;
 import checkers.inference.solver.constraintgraph.ConstraintGraph;
 import checkers.inference.solver.constraintgraph.GraphBuilder;
 import checkers.inference.solver.frontend.ConstraintSerializer;
@@ -65,8 +64,6 @@ public class GeneralSolver implements InferenceSolver {
     private BackEnd<?, ?> realBackEnd;
 
     // Timing variables:
-    private long graphBuildingStart;
-    private long graphBuildingEnd;
     private long solvingStart;
     private long solvingEnd;
 
@@ -77,14 +74,14 @@ public class GeneralSolver implements InferenceSolver {
 
         InferenceSolution solution = null;
 
-        configure(configuration);
+        configureSolverArgs(configuration);
         configureLattice(qualHierarchy);
         Serializer<?, ?> defaultSerializer = createSerializer(backEndType, lattice);
 
         if (useGraph) {
-            graphBuildingStart = System.currentTimeMillis();
+            final long graphBuildingStart = System.currentTimeMillis();
             constraintGraph = generateGraph(slots, constraints, processingEnvironment);
-            graphBuildingEnd = System.currentTimeMillis();
+            final long graphBuildingEnd = System.currentTimeMillis();
             StatisticRecorder.record(StatisticKey.GRAPH_GENERATION_TIME, (graphBuildingEnd - graphBuildingStart));
             solution = graphSolve(constraintGraph, configuration, slots, constraints, qualHierarchy,
                     processingEnvironment, defaultSerializer);
@@ -95,6 +92,7 @@ public class GeneralSolver implements InferenceSolver {
         }
 
         if (solution == null) {
+            // Solution should never be null.
             ErrorReporter.errorAbort("Null solution detected!");
         }
 
@@ -114,14 +112,17 @@ public class GeneralSolver implements InferenceSolver {
      * 
      * @param configuration
      */
-    private void configure(final Map<String, String> configuration) {
+    private void configureSolverArgs(final Map<String, String> configuration) {
 
         final String backEndName = configuration.get(SolverArg.backEndType.name());
         final String useGraph = configuration.get(SolverArg.useGraph.name());
         final String solveInParallel = configuration.get(SolverArg.solveInParallel.name());
         final String collectStatistic = configuration.get(SolverArg.collectStatistic.name());
 
-        backEndType = new BackEndType(backEndName);
+        backEndType = backEndName == null ? BackEndType.MAXSAT : BackEndType.getBackEndType(backEndName);
+        if (backEndType == null) {
+            ErrorReporter.errorAbort("Back end \"" + backEndName + "\" has not been implemented yet.");
+        }
 
         if (useGraph == null || useGraph.equals(Constants.TRUE)) {
             // Configure use of constraint graph. Default is true.
@@ -130,7 +131,7 @@ public class GeneralSolver implements InferenceSolver {
             this.useGraph = false;
         }
 
-        if (backEndType.getBackEndType().equals(BackEndTypeEnum.LogiQL)) {
+        if (backEndType.fullyQualifiedName.equals(BackEndType.LOGIQL.fullyQualifiedName)) {
             // Configure solving strategy.
             this.solveInParallel = false;
         } else if (solveInParallel == null || solveInParallel.equals(Constants.TRUE)) {
@@ -148,7 +149,7 @@ public class GeneralSolver implements InferenceSolver {
 
         // Sanitize the configuration if it needs.
         sanitizeConfiguration();
-        System.out.println("Configuration: \nback end type: " + this.backEndType.getSimpleName() + "; \nuseGraph: "
+        System.out.println("Configuration: \nback end type: " + this.backEndType.simpleName + "; \nuseGraph: "
                 + this.useGraph + "; \nsolveInParallel: " + this.solveInParallel + ".");
     }
 
@@ -193,7 +194,7 @@ public class GeneralSolver implements InferenceSolver {
         BackEnd<?, ?> backEnd = null;
 
         try {
-            Class<?> backEndClass = Class.forName(backEndType.getFullyQualifiedName() + "BackEnd");
+            Class<?> backEndClass = Class.forName(backEndType.fullyQualifiedName + "BackEnd");
             Constructor<?> cons = backEndClass.getConstructor(Map.class, Collection.class,
                     Collection.class, QualifierHierarchy.class, ProcessingEnvironment.class,
                     Serializer.class, Lattice.class);

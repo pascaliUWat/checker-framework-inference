@@ -9,7 +9,6 @@ import javax.lang.model.element.AnnotationMirror;
 
 import checkers.inference.InferenceMain;
 import checkers.inference.solver.backend.BackEndType;
-import checkers.inference.solver.backend.BackEndType.BackEndTypeEnum;
 import checkers.inference.solver.util.StatisticRecorder.StatisticKey;
 
 /**
@@ -95,11 +94,11 @@ public class PrintUtils {
             buildStatisticText(statistic, basicInfo, StatisticKey.GRAPH_SIZE);
         }
 
-        if (backEndType.getBackEndType().equals(BackEndTypeEnum.MaxSAT)
-                || backEndType.getBackEndType().equals(BackEndTypeEnum.Lingeling)) {
+        if (backEndType.fullyQualifiedName.equals(BackEndType.MAXSAT.fullyQualifiedName)
+                || backEndType.fullyQualifiedName.equals(BackEndType.LINGELING.fullyQualifiedName)) {
             buildStatisticText(statistic, basicInfo, StatisticKey.CNF_VARIABLE_SIZE);
             buildStatisticText(statistic, basicInfo, StatisticKey.CNF_CLAUSE_SIZE);
-        } else if (backEndType.getBackEndType().equals(BackEndTypeEnum.LogiQL)) {
+        } else if (backEndType.fullyQualifiedName.equals(BackEndType.LOGIQL.fullyQualifiedName)) {
             buildStatisticText(statistic, basicInfo, StatisticKey.LOGIQL_PREDICATE_SIZE);
             buildStatisticText(statistic, basicInfo, StatisticKey.LOGIQL_DATA_SIZE);
         }
@@ -117,13 +116,13 @@ public class PrintUtils {
             buildStatisticText(statistic, timingInfo, StatisticKey.OVERALL_NOGRAPH_SOLVING_TIME);
         }
 
-        if (backEndType.getBackEndType().equals(BackEndTypeEnum.MaxSAT)
-                || backEndType.getBackEndType().equals(BackEndTypeEnum.Lingeling)) {
+        if (backEndType.fullyQualifiedName.equals(BackEndType.MAXSAT.fullyQualifiedName)
+                || backEndType.fullyQualifiedName.equals(BackEndType.LINGELING.fullyQualifiedName)) {
             buildStatisticText(StatisticKey.SAT_SERIALIZATION_TIME.toString().toLowerCase(),
                     StatisticRecorder.satSerializationTime.get(), timingInfo);
             buildStatisticText(StatisticKey.SAT_SOLVING_TIME.toString().toLowerCase(),
                     StatisticRecorder.satSolvingTime.get(), timingInfo);
-        } else if (backEndType.getBackEndType().equals(BackEndTypeEnum.Lingeling)) {
+        } else if (backEndType.fullyQualifiedName.equals(BackEndType.LINGELING.fullyQualifiedName)) {
             buildStatisticText(statistic, timingInfo, StatisticKey.LOGIQL_SERIALIZATION_TIME);
             buildStatisticText(statistic, timingInfo, StatisticKey.LOGIQL_SOLVING_TIME);
         }

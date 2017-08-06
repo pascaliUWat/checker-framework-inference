@@ -16,7 +16,7 @@ import checkers.inference.model.VariableSlot;
  * @param <T> Type of constraint.
  * @param <S> Encoding type for constraint.
  */
-public class VariableCombos<T extends Constraint, S> {
+public abstract class VariableCombos<T extends Constraint, S> {
 
     private final S emptyValue;
 

@@ -37,7 +37,7 @@ public class ConstraintSerializer<S, T> implements Serializer<S, T> {
     public ConstraintSerializer(BackEndType backEndType, Lattice lattice) {
         try {
             String backEndPath = backEndType.fullyQualifiedName;
-            if (backEndPath.equals(BackEndType.LINGELING.fullyQualifiedName)) {
+            if (backEndType.equals(BackEndType.LINGELING)) {
                 // Lingeling back ends also uses Max-SAT serializer.
                 backEndPath = BackEndType.MAXSAT.fullyQualifiedName;
             }

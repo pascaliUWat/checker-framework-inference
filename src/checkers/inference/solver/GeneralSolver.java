@@ -131,7 +131,7 @@ public class GeneralSolver implements InferenceSolver {
             this.useGraph = false;
         }
 
-        if (backEndType.fullyQualifiedName.equals(BackEndType.LOGIQL.fullyQualifiedName)) {
+        if (backEndType.equals(BackEndType.LOGIQL)) {
             // Configure solving strategy.
             this.solveInParallel = false;
         } else if (solveInParallel == null || solveInParallel.equals(Constants.TRUE)) {

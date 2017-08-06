@@ -94,11 +94,10 @@ public class PrintUtils {
             buildStatisticText(statistic, basicInfo, StatisticKey.GRAPH_SIZE);
         }
 
-        if (backEndType.fullyQualifiedName.equals(BackEndType.MAXSAT.fullyQualifiedName)
-                || backEndType.fullyQualifiedName.equals(BackEndType.LINGELING.fullyQualifiedName)) {
+        if (backEndType.equals(BackEndType.MAXSAT) || backEndType.equals(BackEndType.LINGELING)) {
             buildStatisticText(statistic, basicInfo, StatisticKey.CNF_VARIABLE_SIZE);
             buildStatisticText(statistic, basicInfo, StatisticKey.CNF_CLAUSE_SIZE);
-        } else if (backEndType.fullyQualifiedName.equals(BackEndType.LOGIQL.fullyQualifiedName)) {
+        } else if (backEndType.equals(BackEndType.LOGIQL)) {
             buildStatisticText(statistic, basicInfo, StatisticKey.LOGIQL_PREDICATE_SIZE);
             buildStatisticText(statistic, basicInfo, StatisticKey.LOGIQL_DATA_SIZE);
         }
@@ -116,13 +115,12 @@ public class PrintUtils {
             buildStatisticText(statistic, timingInfo, StatisticKey.OVERALL_NOGRAPH_SOLVING_TIME);
         }
 
-        if (backEndType.fullyQualifiedName.equals(BackEndType.MAXSAT.fullyQualifiedName)
-                || backEndType.fullyQualifiedName.equals(BackEndType.LINGELING.fullyQualifiedName)) {
+        if (backEndType.equals(BackEndType.MAXSAT) || backEndType.equals(BackEndType.LINGELING)) {
             buildStatisticText(StatisticKey.SAT_SERIALIZATION_TIME.toString().toLowerCase(),
                     StatisticRecorder.satSerializationTime.get(), timingInfo);
             buildStatisticText(StatisticKey.SAT_SOLVING_TIME.toString().toLowerCase(),
                     StatisticRecorder.satSolvingTime.get(), timingInfo);
-        } else if (backEndType.fullyQualifiedName.equals(BackEndType.LINGELING.fullyQualifiedName)) {
+        } else if (backEndType.equals(BackEndType.LINGELING)) {
             buildStatisticText(statistic, timingInfo, StatisticKey.LOGIQL_SERIALIZATION_TIME);
             buildStatisticText(statistic, timingInfo, StatisticKey.LOGIQL_SOLVING_TIME);
         }

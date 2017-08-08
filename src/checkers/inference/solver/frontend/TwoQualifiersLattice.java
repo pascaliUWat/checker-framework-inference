@@ -1,7 +1,7 @@
 package checkers.inference.solver.frontend;
 
-import org.checkerframework.javacutil.AnnotationUtils;
-
+import java.util.Collection;
+import java.util.Map;
 import java.util.Set;
 
 import javax.lang.model.element.AnnotationMirror;
@@ -14,41 +14,13 @@ import javax.lang.model.element.AnnotationMirror;
  */
 public class TwoQualifiersLattice extends Lattice {
 
-    protected Set<AnnotationMirror> allTypes;
-
-    public TwoQualifiersLattice(AnnotationMirror top, AnnotationMirror bottom) {
-        this.top = top;
-        this.bottom = bottom;
-        this.allTypes = AnnotationUtils.createAnnotationSet();
-        this.numTypes = 2;
+    public TwoQualifiersLattice(Map<AnnotationMirror, Collection<AnnotationMirror>> subType,
+            Map<AnnotationMirror, Collection<AnnotationMirror>> superType,
+            Map<AnnotationMirror, Collection<AnnotationMirror>> incomparableType,
+            Map<AnnotationMirror, Integer> typeToInt, Map<Integer, AnnotationMirror> intToType,
+            Set<? extends AnnotationMirror> allTypes, AnnotationMirror top, AnnotationMirror bottom,
+            int numTypes) {
+        super(subType, superType, incomparableType, typeToInt, intToType, allTypes, top, bottom,
+                numTypes);
     }
-
-    @Override
-    public void configure() {
-        this.allTypes.add(top);
-        this.allTypes.add(bottom);
-        calculateSubSupertypes();
-    }
-
-    @Override
-    protected void calculateSubSupertypes() {
-        Set<AnnotationMirror> topSet = AnnotationUtils.createAnnotationSet();
-        Set<AnnotationMirror> bottomSet = AnnotationUtils.createAnnotationSet();
-        topSet.add(top);
-        bottomSet.add(bottom);
-        this.typeToInt.put(top, 0);
-        this.typeToInt.put(bottom, 1);
-        this.intToType.put(0, top);
-        this.intToType.put(1, bottom);
-        subType.put(top, allTypes);
-        superType.put(top, topSet);
-        subType.put(bottom, bottomSet);
-        superType.put(bottom, allTypes);
-    }
-
-    @Override
-    public Set<AnnotationMirror> getAllTypes() {
-        return this.allTypes;
-    }
-
 }

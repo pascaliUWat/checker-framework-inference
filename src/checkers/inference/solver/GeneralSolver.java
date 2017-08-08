@@ -35,6 +35,7 @@ import checkers.inference.solver.constraintgraph.ConstraintGraph;
 import checkers.inference.solver.constraintgraph.GraphBuilder;
 import checkers.inference.solver.frontend.ConstraintSerializer;
 import checkers.inference.solver.frontend.Lattice;
+import checkers.inference.solver.frontend.LatticeBuilder;
 import checkers.inference.solver.frontend.TwoQualifiersLattice;
 import checkers.inference.solver.util.Constants;
 import checkers.inference.solver.util.Constants.SolverArg;
@@ -154,14 +155,13 @@ public class GeneralSolver implements InferenceSolver {
     }
 
     protected void configureLattice(QualifierHierarchy qualHierarchy) {
-        lattice = new Lattice(qualHierarchy);
-        lattice.configure();
+        LatticeBuilder latticeBuilder = new LatticeBuilder();
+        lattice = latticeBuilder.buildLattice(qualHierarchy);
     }
 
     protected TwoQualifiersLattice createTwoQualifierLattice(AnnotationMirror top, AnnotationMirror bottom) {
-        TwoQualifiersLattice latticeFor2 = new TwoQualifiersLattice(top, bottom);
-        latticeFor2.configure();
-        return latticeFor2;
+        LatticeBuilder latticeBuilder = new LatticeBuilder();
+        return latticeBuilder.buildTwoTypeLattice(top, bottom);
     }
 
     /**

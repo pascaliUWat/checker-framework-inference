@@ -1,7 +1,5 @@
 package checkers.inference.solver.backend.logiqlbackend;
 
-import org.checkerframework.framework.type.QualifierHierarchy;
-
 import java.io.File;
 import java.io.PrintWriter;
 import java.util.Collection;
@@ -11,6 +9,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.annotation.processing.ProcessingEnvironment;
 import javax.lang.model.element.AnnotationMirror;
+
+import org.checkerframework.framework.type.QualifierHierarchy;
 
 import checkers.inference.model.Constraint;
 import checkers.inference.model.Serializer;
@@ -94,7 +94,7 @@ public class LogiQLBackEnd extends BackEnd<String, String> {
     }
 
     private void addConstants() {
-        for (AnnotationMirror annoMirror : lattice.getAllTypes()) {
+        for (AnnotationMirror annoMirror : lattice.allTypes) {
             String constant = NameUtils.getSimpleName(annoMirror);
             logiQLText.insert(0, "+constant(c), +hasconstantName[c] = \"" + constant + "\".\n");
         }

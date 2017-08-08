@@ -106,7 +106,7 @@ public class MaxSatSerializer implements Serializer<VecInt[], VecInt[]> {
                     MathUtils.mapIdToMatrixEntry(subtype.getId(), lattice.bottom, lattice));
 
             List<VecInt> resultList = new ArrayList<VecInt>();
-            for (AnnotationMirror type : lattice.getAllTypes()) {
+            for (AnnotationMirror type : lattice.allTypes) {
                 // if we know subtype
                 if (!ConstantSlotUtils.areSameType(type, lattice.top)) {
                     resultList.add(VectorUtils
@@ -202,7 +202,7 @@ public class MaxSatSerializer implements Serializer<VecInt[], VecInt[]> {
         @Override
         protected VecInt[] constant_variable(ConstantSlot slot1, VariableSlot slot2,
                 EqualityConstraint constraint) {
-            if (lattice.getAllTypes().contains(slot1.getValue())) {
+            if (lattice.allTypes.contains(slot1.getValue())) {
                 return VectorUtils.asVecArray(
                         MathUtils.mapIdToMatrixEntry(slot2.getId(), slot1.getValue(), lattice));
             } else {
@@ -222,8 +222,8 @@ public class MaxSatSerializer implements Serializer<VecInt[], VecInt[]> {
             // a <=> b which is the same as (!a v b) & (!b v a)
             VecInt[] result = new VecInt[lattice.numTypes * 2];
             int i = 0;
-            for (AnnotationMirror type : lattice.getAllTypes()) {
-                if (lattice.getAllTypes().contains(type)) {
+            for (AnnotationMirror type : lattice.allTypes) {
+                if (lattice.allTypes.contains(type)) {
                     result[i] = VectorUtils.asVec(
                             -MathUtils.mapIdToMatrixEntry(slot1.getId(), type, lattice),
                             MathUtils.mapIdToMatrixEntry(slot2.getId(), type, lattice));
@@ -263,7 +263,7 @@ public class MaxSatSerializer implements Serializer<VecInt[], VecInt[]> {
         @Override
         protected VecInt[] constant_variable(ConstantSlot slot1, VariableSlot slot2,
                 InequalityConstraint constraint) {
-            if (lattice.getAllTypes().contains(slot1.getValue())) {
+            if (lattice.allTypes.contains(slot1.getValue())) {
                 return VectorUtils.asVecArray(
                         -MathUtils.mapIdToMatrixEntry(slot2.getId(), slot1.getValue(), lattice));
             } else {
@@ -283,8 +283,8 @@ public class MaxSatSerializer implements Serializer<VecInt[], VecInt[]> {
             // a <=> !b which is the same as (!a v !b) & (b v a)
             VecInt[] result = new VecInt[lattice.numTypes * 2];
             int i = 0;
-            for (AnnotationMirror type : lattice.getAllTypes()) {
-                if (lattice.getAllTypes().contains(type)) {
+            for (AnnotationMirror type : lattice.allTypes) {
+                if (lattice.allTypes.contains(type)) {
                     result[i] = VectorUtils.asVec(
                             -MathUtils.mapIdToMatrixEntry(slot1.getId(), type, lattice),
                             -MathUtils.mapIdToMatrixEntry(slot2.getId(), type, lattice));
@@ -326,7 +326,7 @@ public class MaxSatSerializer implements Serializer<VecInt[], VecInt[]> {
                 ComparableConstraint constraint) {
             // a <=> !b which is the same as (!a v !b) & (b v a)
             List<VecInt> list = new ArrayList<VecInt>();
-            for (AnnotationMirror type : lattice.getAllTypes()) {
+            for (AnnotationMirror type : lattice.allTypes) {
                 if (lattice.incomparableType.keySet().contains(type)) {
                     for (AnnotationMirror notComparable : lattice.incomparableType.get(type)) {
                         list.add(VectorUtils.asVec(
@@ -396,7 +396,7 @@ public class MaxSatSerializer implements Serializer<VecInt[], VecInt[]> {
     public VecInt[] serialize(PreferenceConstraint preferenceConstraint) {
         VariableSlot vs = preferenceConstraint.getVariable();
         ConstantSlot cs = preferenceConstraint.getGoal();
-        if (lattice.getAllTypes().contains(cs.getValue())) {
+        if (lattice.allTypes.contains(cs.getValue())) {
             return VectorUtils.asVecArray(MathUtils.mapIdToMatrixEntry(vs.getId(), cs.getValue(),
                     lattice));
         } else {

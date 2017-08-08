@@ -80,7 +80,7 @@ public class DecodingTool {
 
     private Map<String, AnnotationMirror> mapStringToAnnoMirror() {
         Map<String, AnnotationMirror> nameMap = new HashMap<String, AnnotationMirror>();
-        for (AnnotationMirror annoMirror : lattice.getAllTypes()) {
+        for (AnnotationMirror annoMirror : lattice.allTypes) {
             String simpleName = NameUtils.getSimpleName(annoMirror);
             nameMap.put(simpleName, annoMirror);
         }

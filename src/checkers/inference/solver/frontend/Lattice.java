@@ -1,10 +1,13 @@
 package checkers.inference.solver.frontend;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
 
 import javax.lang.model.element.AnnotationMirror;
+
+import org.checkerframework.framework.type.QualifierHierarchy;
 
 /**
  * Lattice class contains necessary information about qualifier hierarchy for
@@ -22,15 +25,57 @@ import javax.lang.model.element.AnnotationMirror;
  */
 public class Lattice {
 
+    /**
+     * subType maps each type qualifier to its sub types.
+     */
     public final Map<AnnotationMirror, Collection<AnnotationMirror>> subType;
+
+    /**
+     * superType maps each type qualifier to its super types.
+     */
     public final Map<AnnotationMirror, Collection<AnnotationMirror>> superType;
+
+    /**
+     * incomparableType maps each type qualifier to its incomparable types.
+     */
     public final Map<AnnotationMirror, Collection<AnnotationMirror>> incomparableType;
+
+    /**
+     * typeToInt maps each type qualifier to an unique integer value starts from
+     * 0 on continuous basis.
+     */
     public final Map<AnnotationMirror, Integer> typeToInt;
+
+    /**
+     * intToType maps an integer value to each type qualifier, which is a
+     * reversed map of typeToInt.
+     */
     public final Map<Integer, AnnotationMirror> intToType;
-    public final Set<? extends AnnotationMirror> allTypes;
-    public final AnnotationMirror top;
-    public final AnnotationMirror bottom;
-    public final int numTypes;
+
+    /**
+     * A qualifier hierarchy comes from InferenceSolver.
+     */
+    public QualifierHierarchy qualHierarchy;
+
+    /**
+     * All type qualifiers in underling type system.
+     */
+    public Set<? extends AnnotationMirror> allTypes;
+
+    /**
+     * Top qualifier of underling type system.
+     */
+    public AnnotationMirror top;
+
+    /**
+     * Bottom type qualifier of underling type system.
+     */
+    public AnnotationMirror bottom;
+
+    /**
+     * Number of type qualifier in underling type system.
+     */
+    public int numTypes;
 
     public Lattice(Map<AnnotationMirror, Collection<AnnotationMirror>> subType,
             Map<AnnotationMirror, Collection<AnnotationMirror>> superType,
@@ -38,12 +83,12 @@ public class Lattice {
             Map<AnnotationMirror, Integer> typeToInt, Map<Integer, AnnotationMirror> intToType,
             Set<? extends AnnotationMirror> allTypes, AnnotationMirror top, AnnotationMirror bottom,
             int numTypes) {
-        this.subType = subType;
-        this.superType = superType;
-        this.incomparableType = incomparableType;
-        this.typeToInt = typeToInt;
-        this.intToType = intToType;
-        this.allTypes = allTypes;
+        this.subType = Collections.unmodifiableMap(subType);
+        this.superType = Collections.unmodifiableMap(superType);
+        this.incomparableType = Collections.unmodifiableMap(incomparableType);
+        this.typeToInt = Collections.unmodifiableMap(typeToInt);
+        this.intToType = Collections.unmodifiableMap(intToType);
+        this.allTypes = Collections.unmodifiableSet(allTypes);
         this.top = top;
         this.bottom = bottom;
         this.numTypes = numTypes;

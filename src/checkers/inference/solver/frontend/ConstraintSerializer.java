@@ -36,12 +36,7 @@ public class ConstraintSerializer<S, T> implements Serializer<S, T> {
     @SuppressWarnings("unchecked")
     public ConstraintSerializer(BackEndType backEndType, Lattice lattice) {
         try {
-            String backEndPath = backEndType.fullyQualifiedName;
-            if (backEndType.equals(BackEndType.LINGELING)) {
-                // Lingeling back ends also uses Max-SAT serializer.
-                backEndPath = BackEndType.MAXSAT.fullyQualifiedName;
-            }
-            Class<?> serializerClass = Class.forName(backEndPath + "Serializer");
+            Class<?> serializerClass = backEndType.serializerClass;
             Constructor<?> cons = serializerClass.getConstructor(Lattice.class);
             realSerializer = (Serializer<S, T>) cons.newInstance(lattice);
         } catch (Exception e) {

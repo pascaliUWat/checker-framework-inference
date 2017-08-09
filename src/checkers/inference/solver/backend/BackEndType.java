@@ -1,17 +1,27 @@
 package checkers.inference.solver.backend;
 
+import checkers.inference.model.Serializer;
+import checkers.inference.solver.backend.logiqlbackend.LogiQLBackEnd;
+import checkers.inference.solver.backend.logiqlbackend.LogiQLSerializer;
+import checkers.inference.solver.backend.maxsatbackend.LingelingBackEnd;
+import checkers.inference.solver.backend.maxsatbackend.MaxSatBackEnd;
+import checkers.inference.solver.backend.maxsatbackend.MaxSatSerializer;
+
 public enum BackEndType {
 
-    MAXSAT("MaxSAT", "checkers.inference.solver.backend.maxsatbackend.MaxSat"), 
-    LINGELING("Lingeling", "checkers.inference.solver.backend.maxsatbackend.Lingeling"), 
-    LOGIQL("LogiQL", "checkers.inference.solver.backend.logiqlbackend.LogiQL");
+    MAXSAT("MaxSAT", MaxSatBackEnd.class, MaxSatSerializer.class), 
+    LINGELING("Lingeling", LingelingBackEnd.class, MaxSatSerializer.class), 
+    LOGIQL("LogiQL", LogiQLBackEnd.class, LogiQLSerializer.class);
 
     public final String simpleName;
-    public final String fullyQualifiedName;
+    public final Class<? extends BackEnd<?, ?>> backEndClass;
+    public final Class<? extends Serializer<?, ?>> serializerClass;
 
-    private BackEndType(String simpleName, String fullyQualifiedName) {
+    private BackEndType(String simpleName, Class<? extends BackEnd<?, ?>> backEndClass,
+            Class<? extends Serializer<?, ?>> serializerClass) {
         this.simpleName = simpleName;
-        this.fullyQualifiedName = fullyQualifiedName;
+        this.backEndClass = backEndClass;
+        this.serializerClass = serializerClass;
     }
 
     public static BackEndType getBackEndType(String simpleName) {

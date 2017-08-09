@@ -194,7 +194,7 @@ public class GeneralSolver implements InferenceSolver {
         BackEnd<?, ?> backEnd = null;
 
         try {
-            Class<?> backEndClass = Class.forName(backEndType.fullyQualifiedName + "BackEnd");
+            Class<?> backEndClass = backEndType.backEndClass;
             Constructor<?> cons = backEndClass.getConstructor(Map.class, Collection.class,
                     Collection.class, QualifierHierarchy.class, ProcessingEnvironment.class,
                     Serializer.class, Lattice.class);

@@ -7,8 +7,6 @@ import java.util.Set;
 
 import javax.lang.model.element.AnnotationMirror;
 
-import org.checkerframework.framework.type.QualifierHierarchy;
-
 /**
  * Lattice class contains necessary information about qualifier hierarchy for
  * constraint constraint solving.
@@ -53,29 +51,24 @@ public class Lattice {
     public final Map<Integer, AnnotationMirror> intToType;
 
     /**
-     * A qualifier hierarchy comes from InferenceSolver.
-     */
-    public QualifierHierarchy qualHierarchy;
-
-    /**
      * All type qualifiers in underling type system.
      */
-    public Set<? extends AnnotationMirror> allTypes;
+    public final Set<? extends AnnotationMirror> allTypes;
 
     /**
      * Top qualifier of underling type system.
      */
-    public AnnotationMirror top;
+    public final AnnotationMirror top;
 
     /**
      * Bottom type qualifier of underling type system.
      */
-    public AnnotationMirror bottom;
+    public final AnnotationMirror bottom;
 
     /**
      * Number of type qualifier in underling type system.
      */
-    public int numTypes;
+    public final int numTypes;
 
     public Lattice(Map<AnnotationMirror, Collection<AnnotationMirror>> subType,
             Map<AnnotationMirror, Collection<AnnotationMirror>> superType,

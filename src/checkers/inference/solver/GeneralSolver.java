@@ -1,6 +1,5 @@
 package checkers.inference.solver;
 
-import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -33,7 +32,6 @@ import checkers.inference.solver.backend.BackEnd;
 import checkers.inference.solver.backend.BackEndType;
 import checkers.inference.solver.constraintgraph.ConstraintGraph;
 import checkers.inference.solver.constraintgraph.GraphBuilder;
-import checkers.inference.solver.frontend.ConstraintSerializer;
 import checkers.inference.solver.frontend.Lattice;
 import checkers.inference.solver.frontend.LatticeBuilder;
 import checkers.inference.solver.frontend.TwoQualifiersLattice;
@@ -165,18 +163,24 @@ public class GeneralSolver implements InferenceSolver {
     }
 
     /**
-     * This method creates a ConstraintSerializer, which can deliver the
-     * constraint/slot to the real serializer. If a costume serialization logic
-     * is needed, user can have a subclass of ConstraintSerializer, override the
-     * serialize method with the costume logic, and then override this method
-     * with returning the instance of new subclass.
-     * 
-     * @param backEndType
-     * @param lattice
-     * @return A deliverer Serializer.
+     * This method create the default serializer for a given backEndType.
+     *
+     * If customized serialization logic is needed, one can override this method and
+     * return a customized serializer corresponding to the given backEndType.
+     *
+     * @param backEndType the backEndType that serializer will associate with.
+     * @param lattice the target type qualifier lattice.
+     * @return A Serializer compatible with the given backEndType.
      */
     protected Serializer<?, ?> createSerializer(BackEndType backEndType, Lattice lattice) {
-        return new ConstraintSerializer<>(backEndType, lattice);
+        try {
+            return backEndType.createDefaultSerializer(lattice);
+        } catch (Exception e) {
+            ErrorReporter.errorAbort(
+                    "Exception happends when creating default serializer for " + backEndType.simpleName + " backend.", e);
+            // Dead code.
+            return null;
+        }
     }
 
     protected ConstraintGraph generateGraph(Collection<Slot> slots, Collection<Constraint> constraints,
@@ -190,20 +194,15 @@ public class GeneralSolver implements InferenceSolver {
             Collection<Slot> slots, Collection<Constraint> constraints,
             QualifierHierarchy qualHierarchy, ProcessingEnvironment processingEnvironment,
             Lattice lattice, Serializer<?, ?> defaultSerializer) {
-
-        BackEnd<?, ?> backEnd = null;
-
         try {
-            Class<?> backEndClass = backEndType.backEndClass;
-            Constructor<?> cons = backEndClass.getConstructor(Map.class, Collection.class,
-                    Collection.class, QualifierHierarchy.class, ProcessingEnvironment.class,
-                    Serializer.class, Lattice.class);
-            backEnd = (BackEnd<?, ?>) cons.newInstance(configuration, slots, constraints, qualHierarchy,
-                    processingEnvironment, defaultSerializer, lattice);
+            return backEndType.createBackEnd(configuration, slots,
+                    constraints, qualHierarchy, processingEnvironment, lattice, defaultSerializer);
         } catch (Exception e) {
-            e.printStackTrace();
+            ErrorReporter.errorAbort(
+                    "Exception happends when creating " + backEndType.simpleName + " backend.", e);
+            // Dead code.
+            return null;
         }
-        return backEnd;
     }
 
     /**

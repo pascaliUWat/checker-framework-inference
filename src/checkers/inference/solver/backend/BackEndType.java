@@ -1,11 +1,22 @@
 package checkers.inference.solver.backend;
 
+import java.lang.reflect.Constructor;
+import java.util.Collection;
+import java.util.Map;
+
+import javax.annotation.processing.ProcessingEnvironment;
+
+import org.checkerframework.framework.type.QualifierHierarchy;
+
+import checkers.inference.model.Constraint;
 import checkers.inference.model.Serializer;
+import checkers.inference.model.Slot;
 import checkers.inference.solver.backend.logiqlbackend.LogiQLBackEnd;
 import checkers.inference.solver.backend.logiqlbackend.LogiQLSerializer;
 import checkers.inference.solver.backend.maxsatbackend.LingelingBackEnd;
 import checkers.inference.solver.backend.maxsatbackend.MaxSatBackEnd;
 import checkers.inference.solver.backend.maxsatbackend.MaxSatSerializer;
+import checkers.inference.solver.frontend.Lattice;
 
 public enum BackEndType {
 
@@ -22,6 +33,22 @@ public enum BackEndType {
         this.simpleName = simpleName;
         this.backEndClass = backEndClass;
         this.serializerClass = serializerClass;
+    }
+
+    public Serializer<?, ?> createDefaultSerializer(Lattice lattice) throws Exception {
+        Constructor<?> cons = serializerClass.getConstructor(Lattice.class);
+        return (Serializer<?, ?>) cons.newInstance(lattice);
+    }
+
+    public BackEnd<?, ?> createBackEnd(Map<String, String> configuration,
+            Collection<Slot> slots, Collection<Constraint> constraints,
+            QualifierHierarchy qualHierarchy, ProcessingEnvironment processingEnvironment,
+            Lattice lattice, Serializer<?, ?> defaultSerializer) throws Exception {
+        Constructor<?> cons = backEndClass.getConstructor(Map.class, Collection.class,
+                Collection.class, QualifierHierarchy.class, ProcessingEnvironment.class,
+                Serializer.class, Lattice.class);
+        return (BackEnd<?, ?>) cons.newInstance(configuration, slots, constraints, qualHierarchy,
+                processingEnvironment, defaultSerializer, lattice);
     }
 
     public static BackEndType getBackEndType(String simpleName) {

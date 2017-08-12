@@ -56,11 +56,11 @@ public class GeneralSolver implements InferenceSolver {
 
     protected BackEndType backEndType;
     protected boolean useGraph;
-    private boolean solveInParallel;
-    private boolean collectStatistic;
-    private Lattice lattice;
-    private ConstraintGraph constraintGraph;
-    private BackEnd<?, ?> realBackEnd;
+    protected boolean solveInParallel;
+    protected boolean collectStatistic;
+    protected Lattice lattice;
+    protected ConstraintGraph constraintGraph;
+    protected BackEnd<?, ?> realBackEnd;
 
     // Timing variables:
     private long solvingStart;

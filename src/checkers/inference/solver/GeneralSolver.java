@@ -173,14 +173,7 @@ public class GeneralSolver implements InferenceSolver {
      * @return A Serializer compatible with the given backEndType.
      */
     protected Serializer<?, ?> createSerializer(BackEndType backEndType, Lattice lattice) {
-        try {
             return backEndType.createDefaultSerializer(lattice);
-        } catch (Exception e) {
-            ErrorReporter.errorAbort(
-                    "Exception happends when creating default serializer for " + backEndType.simpleName + " backend.", e);
-            // Dead code.
-            return null;
-        }
     }
 
     protected ConstraintGraph generateGraph(Collection<Slot> slots, Collection<Constraint> constraints,
@@ -194,15 +187,8 @@ public class GeneralSolver implements InferenceSolver {
             Collection<Slot> slots, Collection<Constraint> constraints,
             QualifierHierarchy qualHierarchy, ProcessingEnvironment processingEnvironment,
             Lattice lattice, Serializer<?, ?> defaultSerializer) {
-        try {
             return backEndType.createBackEnd(configuration, slots,
                     constraints, qualHierarchy, processingEnvironment, lattice, defaultSerializer);
-        } catch (Exception e) {
-            ErrorReporter.errorAbort(
-                    "Exception happends when creating " + backEndType.simpleName + " backend.", e);
-            // Dead code.
-            return null;
-        }
     }
 
     /**

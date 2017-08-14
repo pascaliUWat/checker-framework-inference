@@ -7,6 +7,7 @@ import java.util.Map;
 import javax.annotation.processing.ProcessingEnvironment;
 
 import org.checkerframework.framework.type.QualifierHierarchy;
+import org.checkerframework.javacutil.ErrorReporter;
 
 import checkers.inference.model.Constraint;
 import checkers.inference.model.Serializer;
@@ -35,20 +36,36 @@ public enum BackEndType {
         this.serializerClass = serializerClass;
     }
 
-    public Serializer<?, ?> createDefaultSerializer(Lattice lattice) throws Exception {
-        Constructor<?> cons = serializerClass.getConstructor(Lattice.class);
-        return (Serializer<?, ?>) cons.newInstance(lattice);
+    public Serializer<?, ?> createDefaultSerializer(Lattice lattice) {
+        Constructor<?> cons;
+        try {
+            cons = serializerClass.getConstructor(Lattice.class);
+            return (Serializer<?, ?>) cons.newInstance(lattice);
+        } catch (Exception e) {
+            ErrorReporter.errorAbort(
+                    "Exception happends when creating default serializer for " + simpleName + " backend.", e);
+            // Dead code.
+            return null;
+        }
     }
 
     public BackEnd<?, ?> createBackEnd(Map<String, String> configuration,
             Collection<Slot> slots, Collection<Constraint> constraints,
             QualifierHierarchy qualHierarchy, ProcessingEnvironment processingEnvironment,
-            Lattice lattice, Serializer<?, ?> defaultSerializer) throws Exception {
-        Constructor<?> cons = backEndClass.getConstructor(Map.class, Collection.class,
-                Collection.class, QualifierHierarchy.class, ProcessingEnvironment.class,
-                Serializer.class, Lattice.class);
-        return (BackEnd<?, ?>) cons.newInstance(configuration, slots, constraints, qualHierarchy,
-                processingEnvironment, defaultSerializer, lattice);
+            Lattice lattice, Serializer<?, ?> defaultSerializer) {
+        try {
+            Constructor<?> cons = backEndClass.getConstructor(Map.class, Collection.class,
+                    Collection.class, QualifierHierarchy.class, ProcessingEnvironment.class,
+                    Serializer.class, Lattice.class);
+
+            return (BackEnd<?, ?>) cons.newInstance(configuration, slots, constraints, qualHierarchy,
+                    processingEnvironment, defaultSerializer, lattice);
+        } catch (Exception e) {
+            ErrorReporter.errorAbort(
+                    "Exception happends when creating " + simpleName + " backend.", e);
+            // Dead code.
+            return null;
+        }
     }
 
     public static BackEndType getBackEndType(String simpleName) {

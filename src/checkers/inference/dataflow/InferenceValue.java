@@ -46,6 +46,13 @@ public class InferenceValue extends CFValue {
         return (InferenceAnalysis) analysis;
     }
 
+    @Override
+    protected void annotationsValidation() {
+        // InferenceValue will by-pass this annotationsValidation.
+        // Since sometimes we create an InferenceValue that contains only annotations from realQualiferHierarchy.
+        // E.g. create an InferenceValue represents the lub of two InferenceValues which both represent constantSlots.
+    }
+
     /**
      * If values for a variable are not the same, create a merge variable to
      * represent the join of the two variables.

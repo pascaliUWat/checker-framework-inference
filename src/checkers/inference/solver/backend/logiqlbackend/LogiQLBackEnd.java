@@ -13,9 +13,9 @@ import javax.lang.model.element.AnnotationMirror;
 import org.checkerframework.framework.type.QualifierHierarchy;
 
 import checkers.inference.model.Constraint;
-import checkers.inference.model.Serializer;
 import checkers.inference.model.Slot;
 import checkers.inference.solver.backend.BackEnd;
+import checkers.inference.solver.backend.Translator;
 import checkers.inference.solver.frontend.Lattice;
 import checkers.inference.solver.util.NameUtils;
 import checkers.inference.solver.util.StatisticRecorder;
@@ -30,7 +30,7 @@ import checkers.inference.solver.util.StatisticRecorder.StatisticKey;
  * @author jianchu
  *
  */
-public class LogiQLBackEnd extends BackEnd<String, String> {
+public class LogiQLBackEnd extends BackEnd<String, String, String> {
 
     private final StringBuilder logiQLText = new StringBuilder();
     private final File logiqldata = new File(new File("").getAbsolutePath() + "/logiqldata");
@@ -41,9 +41,9 @@ public class LogiQLBackEnd extends BackEnd<String, String> {
     private long solvingEnd;
     public LogiQLBackEnd(Map<String, String> configuration, Collection<Slot> slots,
             Collection<Constraint> constraints, QualifierHierarchy qualHierarchy,
-            ProcessingEnvironment processingEnvironment, Serializer<String, String> realSerializer,
+            ProcessingEnvironment processingEnvironment, Translator<String, String, String> realTranslator,
             Lattice lattice) {
-        super(configuration, slots, constraints, qualHierarchy, processingEnvironment, realSerializer,
+        super(configuration, slots, constraints, qualHierarchy, processingEnvironment, realTranslator,
                 lattice);
         logiqldata.mkdir();
     }
@@ -76,6 +76,8 @@ public class LogiQLBackEnd extends BackEnd<String, String> {
         this.solvingEnd = System.currentTimeMillis();
 
         StatisticRecorder.record(StatisticKey.LOGIQL_SOLVING_TIME, (solvingEnd - solvingStart));
+
+        //TODO: Refactor this to let Translator take the responsiblity of decoding.
         DecodingTool DecodeTool = new DecodingTool(varSlotIds, logiqldataPath, lattice, localNth);
         result = DecodeTool.decodeResult();
         // PrintUtils.printResult(result);
@@ -86,7 +88,7 @@ public class LogiQLBackEnd extends BackEnd<String, String> {
     public void convertAll() {
         for (Constraint constraint : constraints) {
             collectVarSlots(constraint);
-            String serializedConstrant = constraint.serialize(realSerializer);
+            String serializedConstrant = constraint.serialize(realTranslator);
             if (serializedConstrant != null) {
                 logiQLText.append(serializedConstrant);
             }

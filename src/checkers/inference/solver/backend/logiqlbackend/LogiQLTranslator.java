@@ -1,5 +1,7 @@
 package checkers.inference.solver.backend.logiqlbackend;
 
+import javax.lang.model.element.AnnotationMirror;
+
 import checkers.inference.model.CombVariableSlot;
 import checkers.inference.model.CombineConstraint;
 import checkers.inference.model.ComparableConstraint;
@@ -10,9 +12,9 @@ import checkers.inference.model.ExistentialVariableSlot;
 import checkers.inference.model.InequalityConstraint;
 import checkers.inference.model.PreferenceConstraint;
 import checkers.inference.model.RefinementVariableSlot;
-import checkers.inference.model.Serializer;
 import checkers.inference.model.SubtypeConstraint;
 import checkers.inference.model.VariableSlot;
+import checkers.inference.solver.backend.Translator;
 import checkers.inference.solver.frontend.Lattice;
 import checkers.inference.solver.frontend.VariableCombos;
 import checkers.inference.solver.util.NameUtils;
@@ -23,12 +25,11 @@ import checkers.inference.solver.util.NameUtils;
  * @author jianchu
  *
  */
-public class LogiQLSerializer implements Serializer<String, String> {
+public class LogiQLTranslator implements Translator<String, String, String> {
 
-    private final Lattice lattice;
 
-    public LogiQLSerializer(Lattice lattice) {
-        this.lattice = lattice;
+    public LogiQLTranslator(Lattice lattice) {
+
     }
 
     @Override
@@ -250,5 +251,11 @@ public class LogiQLSerializer implements Serializer<String, String> {
     }
 
     public static final String emptyString = "";
+
+    @Override
+    public AnnotationMirror decodeSolution(String solution) {
+        // TODO Refactor LogiQL backend to follow the design protocal.
+        return null;
+    }
 
 }

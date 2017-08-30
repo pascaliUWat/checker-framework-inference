@@ -13,23 +13,23 @@ import checkers.inference.model.Constraint;
 import checkers.inference.model.Serializer;
 import checkers.inference.model.Slot;
 import checkers.inference.solver.backend.logiqlbackend.LogiQLBackEnd;
-import checkers.inference.solver.backend.logiqlbackend.LogiQLSerializer;
+import checkers.inference.solver.backend.logiqlbackend.LogiQLTranslator;
 import checkers.inference.solver.backend.maxsatbackend.LingelingBackEnd;
 import checkers.inference.solver.backend.maxsatbackend.MaxSatBackEnd;
-import checkers.inference.solver.backend.maxsatbackend.MaxSatSerializer;
+import checkers.inference.solver.backend.maxsatbackend.MaxSatTranslator;
 import checkers.inference.solver.frontend.Lattice;
 
 public enum BackEndType {
 
-    MAXSAT("MaxSAT", MaxSatBackEnd.class, MaxSatSerializer.class), 
-    LINGELING("Lingeling", LingelingBackEnd.class, MaxSatSerializer.class), 
-    LOGIQL("LogiQL", LogiQLBackEnd.class, LogiQLSerializer.class);
+    MAXSAT("MaxSAT", MaxSatBackEnd.class, MaxSatTranslator.class),
+    LINGELING("Lingeling", LingelingBackEnd.class, MaxSatTranslator.class),
+    LOGIQL("LogiQL", LogiQLBackEnd.class, LogiQLTranslator.class);
 
     public final String simpleName;
-    public final Class<? extends BackEnd<?, ?>> backEndClass;
+    public final Class<? extends BackEnd<?, ?, ?>> backEndClass;
     public final Class<? extends Serializer<?, ?>> serializerClass;
 
-    private BackEndType(String simpleName, Class<? extends BackEnd<?, ?>> backEndClass,
+    private BackEndType(String simpleName, Class<? extends BackEnd<?, ?, ?>> backEndClass,
             Class<? extends Serializer<?, ?>> serializerClass) {
         this.simpleName = simpleName;
         this.backEndClass = backEndClass;
@@ -49,7 +49,7 @@ public enum BackEndType {
         }
     }
 
-    public BackEnd<?, ?> createBackEnd(Map<String, String> configuration,
+    public BackEnd<?, ?, ?> createBackEnd(Map<String, String> configuration,
             Collection<Slot> slots, Collection<Constraint> constraints,
             QualifierHierarchy qualHierarchy, ProcessingEnvironment processingEnvironment,
             Lattice lattice, Serializer<?, ?> defaultSerializer) {
@@ -58,7 +58,7 @@ public enum BackEndType {
                     Collection.class, QualifierHierarchy.class, ProcessingEnvironment.class,
                     Serializer.class, Lattice.class);
 
-            return (BackEnd<?, ?>) cons.newInstance(configuration, slots, constraints, qualHierarchy,
+            return (BackEnd<?, ?, ?>) cons.newInstance(configuration, slots, constraints, qualHierarchy,
                     processingEnvironment, defaultSerializer, lattice);
         } catch (Exception e) {
             ErrorReporter.errorAbort(

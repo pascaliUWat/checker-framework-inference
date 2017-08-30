@@ -25,6 +25,7 @@ import checkers.inference.solver.backend.BackEnd;
 import checkers.inference.solver.constraintgraph.ConstraintGraph;
 import checkers.inference.solver.constraintgraph.GraphBuilder;
 import checkers.inference.solver.constraintgraph.Vertex;
+import checkers.inference.solver.frontend.LatticeBuilder;
 import checkers.inference.solver.frontend.TwoQualifiersLattice;
 import checkers.inference.solver.util.PrintUtils;
 import checkers.inference.solver.util.StatisticRecorder;
@@ -58,7 +59,7 @@ public class DataflowGeneralSolver extends GeneralSolver {
         DATAFLOWBOTTOM = AnnotationUtils.fromClass(processingEnvironment.getElementUtils(),
                 DataFlowInferenceBottom.class);
 
-        List<BackEnd<?, ?>> backEnds = new ArrayList<>();
+        List<BackEnd<?, ?, ?>> backEnds = new ArrayList<>();
         StatisticRecorder.record(StatisticKey.GRAPH_SIZE, (long) constraintGraph.getConstantPath()
                 .size());
         for (Map.Entry<Vertex, Set<Constraint>> entry : constraintGraph.getConstantPath().entrySet()) {
@@ -69,8 +70,7 @@ public class DataflowGeneralSolver extends GeneralSolver {
                 if (dataflowValues.length == 1) {
                     AnnotationMirror DATAFLOWTOP = DataflowUtils.createDataflowAnnotation(
                             DataflowUtils.convert(dataflowValues), processingEnvironment);
-                    TwoQualifiersLattice latticeFor2 = createTwoQualifierLattice(DATAFLOWTOP,
-                            DATAFLOWBOTTOM);
+                    TwoQualifiersLattice latticeFor2 = new LatticeBuilder().buildTwoTypeLattice(DATAFLOWTOP, DATAFLOWBOTTOM);
                     Serializer<?, ?> serializer = createSerializer(backEndType, latticeFor2);
                     backEnds.add(createBackEnd(backEndType, configuration, slots, entry.getValue(),
                             qualHierarchy, processingEnvironment, latticeFor2, serializer));

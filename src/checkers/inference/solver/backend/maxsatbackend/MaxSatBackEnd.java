@@ -3,7 +3,6 @@ package checkers.inference.solver.backend.maxsatbackend;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -23,13 +22,12 @@ import checkers.inference.InferenceMain;
 import checkers.inference.SlotManager;
 import checkers.inference.model.Constraint;
 import checkers.inference.model.PreferenceConstraint;
-import checkers.inference.model.Serializer;
 import checkers.inference.model.Slot;
 import checkers.inference.solver.backend.BackEnd;
+import checkers.inference.solver.backend.Translator;
 import checkers.inference.solver.frontend.Lattice;
 import checkers.inference.solver.util.StatisticRecorder;
 import checkers.inference.solver.util.StatisticRecorder.StatisticKey;
-import checkers.inference.solver.util.VectorUtils;
 
 /**
  * MaxSatBackEnd calls MaxSatSerializer that converts constraint into a list of
@@ -38,7 +36,7 @@ import checkers.inference.solver.util.VectorUtils;
  * @author jianchu
  *
  */
-public class MaxSatBackEnd extends BackEnd<VecInt[], VecInt[]> {
+public class MaxSatBackEnd extends BackEnd<VecInt[], VecInt[], Integer> {
 
     protected final SlotManager slotManager;
     protected final List<VecInt> hardClauses = new LinkedList<VecInt>();
@@ -53,7 +51,7 @@ public class MaxSatBackEnd extends BackEnd<VecInt[], VecInt[]> {
 
     public MaxSatBackEnd(Map<String, String> configuration, Collection<Slot> slots,
             Collection<Constraint> constraints, QualifierHierarchy qualHierarchy,
-            ProcessingEnvironment processingEnvironment, Serializer<VecInt[], VecInt[]> realSerializer,
+            ProcessingEnvironment processingEnvironment, Translator<VecInt[], VecInt[], Integer> realSerializer,
             Lattice lattice) {
         super(configuration, slots, constraints, qualHierarchy, processingEnvironment, realSerializer,
                 lattice);
@@ -76,7 +74,20 @@ public class MaxSatBackEnd extends BackEnd<VecInt[], VecInt[]> {
         this.convertAll();
         this.serializationEnd = System.currentTimeMillis();
 
-        generateOneHotClauses(hardClauses);
+        //TODO: Would it be better to have a type restriction on Translator class
+        // that a backend requires? E.g. for MaxSatBackend, the translator passed
+        // in has to be a sub-class of MaxSatTranslator.
+        //
+        // The pros would be we can have more flexible way of interactions between
+        // translators and backends without losing type safety.
+        //
+        // THe cons would be we will add one more type parameter on BackEnd class,
+        // which makes BackEnd really complicate (we will have 4 type parameters on
+        // a single class!).
+        MaxSatTranslator maxSatTranslator = (MaxSatTranslator) realTranslator;
+        for (Integer varSlotId : this.varSlotIds) {
+            maxSatTranslator.generateOneHotClauses(hardClauses, varSlotId);
+        }
 
         if (shouldOutputCNF()) {
             buildCNF();
@@ -143,7 +154,7 @@ public class MaxSatBackEnd extends BackEnd<VecInt[], VecInt[]> {
     public void convertAll() {
         for (Constraint constraint : constraints) {
             collectVarSlots(constraint);
-            for (VecInt res : constraint.serialize(realSerializer)) {
+            for (VecInt res : constraint.serialize(realTranslator)) {
                 if (res != null && res.size() != 0) {
                     if (constraint instanceof PreferenceConstraint) {
                         softClauses.add(res);
@@ -155,38 +166,13 @@ public class MaxSatBackEnd extends BackEnd<VecInt[], VecInt[]> {
         }
     }
 
-    /**
-     * generate well form clauses such that there is one and only one beta value
-     * can be true.
-     *
-     * @param clauses
-     */
-    protected void generateOneHotClauses(List<VecInt> clauses) {
-        for (Integer id : this.varSlotIds) {
-            int[] leastOneIsTrue = new int[lattice.numTypes];
-            for (Integer i : lattice.intToType.keySet()) {
-                leastOneIsTrue[i] = MathUtils.mapIdToMatrixEntry(id, i.intValue(), lattice);
-            }
-            clauses.add(VectorUtils.asVec(leastOneIsTrue));
-            List<Integer> varList = new ArrayList<Integer>(lattice.intToType.keySet());
-            for (int i = 0; i < varList.size(); i++) {
-                for (int j = i + 1; j < varList.size(); j++) {
-                    VecInt vecInt = new VecInt(2);
-                    vecInt.push(-MathUtils.mapIdToMatrixEntry(id, varList.get(i), lattice));
-                    vecInt.push(-MathUtils.mapIdToMatrixEntry(id, varList.get(j), lattice));
-                    clauses.add(vecInt);
-                }
-            }
-        }
-    }
-
     protected Map<Integer, AnnotationMirror> decode(int[] solution) {
         Map<Integer, AnnotationMirror> result = new HashMap<>();
         for (Integer var : solution) {
             if (var > 0) {
                 var = var - 1;
                 int slotId = MathUtils.getSlotId(var, lattice);
-                AnnotationMirror type = lattice.intToType.get(MathUtils.getIntRep(var, lattice));
+                AnnotationMirror type = realTranslator.decodeSolution(var);
                 result.put(slotId, type);
             }
         }

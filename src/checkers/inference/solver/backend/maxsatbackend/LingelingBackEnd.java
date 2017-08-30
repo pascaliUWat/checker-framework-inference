@@ -19,8 +19,8 @@ import org.checkerframework.framework.type.QualifierHierarchy;
 import org.sat4j.core.VecInt;
 
 import checkers.inference.model.Constraint;
-import checkers.inference.model.Serializer;
 import checkers.inference.model.Slot;
+import checkers.inference.solver.backend.Translator;
 import checkers.inference.solver.frontend.Lattice;
 import checkers.inference.solver.util.StatisticRecorder;
 import checkers.inference.solver.util.StatisticRecorder.StatisticKey;
@@ -46,9 +46,9 @@ public class LingelingBackEnd extends MaxSatBackEnd {
 
     public LingelingBackEnd(Map<String, String> configuration, Collection<Slot> slots,
             Collection<Constraint> constraints, QualifierHierarchy qualHierarchy,
-            ProcessingEnvironment processingEnvironment, Serializer<VecInt[], VecInt[]> realSerializer,
+            ProcessingEnvironment processingEnvironment, Translator<VecInt[], VecInt[], Integer> realTranslator,
             Lattice lattice) {
-        super(configuration, slots, constraints, qualHierarchy, processingEnvironment, realSerializer,
+        super(configuration, slots, constraints, qualHierarchy, processingEnvironment, realTranslator,
                 lattice);
     }
 
@@ -60,7 +60,11 @@ public class LingelingBackEnd extends MaxSatBackEnd {
         this.convertAll();
         this.serializationEnd = System.currentTimeMillis();
 
-        generateOneHotClauses(hardClauses);
+        MaxSatTranslator maxSatTranslator = (MaxSatTranslator) realTranslator;
+        for (Integer varSlotId : this.varSlotIds) {
+            maxSatTranslator.generateOneHotClauses(hardClauses, varSlotId);
+        }
+
         buildCNF();
         collectVals();
         recordData();

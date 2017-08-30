@@ -12,7 +12,6 @@ import org.checkerframework.framework.type.QualifierHierarchy;
 
 import checkers.inference.model.ConstantSlot;
 import checkers.inference.model.Constraint;
-import checkers.inference.model.Serializer;
 import checkers.inference.model.Slot;
 import checkers.inference.model.VariableSlot;
 import checkers.inference.solver.frontend.Lattice;
@@ -35,26 +34,26 @@ import checkers.inference.solver.frontend.Lattice;
  * @param <S> Encoding type for slot.
  * @param <T> Encdoing type for constraint.
  */
-public abstract class BackEnd<S, T> {
+public abstract class BackEnd<S, T, A> {
 
     protected final Map<String, String> configuration;
     protected final Collection<Slot> slots;
     protected final Collection<Constraint> constraints;
     protected final QualifierHierarchy qualHierarchy;
     protected final ProcessingEnvironment processingEnvironment;
-    protected final Serializer<S, T> realSerializer;
+    protected final Translator<S, T, A> realTranslator;
     protected final Set<Integer> varSlotIds;
     protected final Lattice lattice;
 
     public BackEnd(Map<String, String> configuration, Collection<Slot> slots,
             Collection<Constraint> constraints, QualifierHierarchy qualHierarchy,
-            ProcessingEnvironment processingEnvironment, Serializer<S, T> realSerializer, Lattice lattice) {
+            ProcessingEnvironment processingEnvironment, Translator<S, T, A> realTranslator, Lattice lattice) {
         this.configuration = configuration;
         this.slots = slots;
         this.constraints = constraints;
         this.qualHierarchy = qualHierarchy;
         this.processingEnvironment = processingEnvironment;
-        this.realSerializer = realSerializer;
+        this.realTranslator = realTranslator;
         this.varSlotIds = new HashSet<Integer>();
         this.lattice = lattice;
     }

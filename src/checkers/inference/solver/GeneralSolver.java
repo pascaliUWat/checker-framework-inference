@@ -30,6 +30,7 @@ import checkers.inference.model.Slot;
 import checkers.inference.model.VariableSlot;
 import checkers.inference.solver.backend.BackEnd;
 import checkers.inference.solver.backend.BackEndType;
+import checkers.inference.solver.backend.Translator;
 import checkers.inference.solver.constraintgraph.ConstraintGraph;
 import checkers.inference.solver.constraintgraph.GraphBuilder;
 import checkers.inference.solver.frontend.Lattice;
@@ -74,7 +75,7 @@ public class GeneralSolver implements InferenceSolver {
 
         configureSolverArgs(configuration);
         configureLattice(qualHierarchy, slots);
-        Serializer<?, ?> defaultSerializer = createSerializer(backEndType, lattice);
+        Translator<?, ?, ?> defaultTranslator = createTranslator(backEndType, lattice);
 
         if (useGraph) {
             final long graphBuildingStart = System.currentTimeMillis();
@@ -82,10 +83,10 @@ public class GeneralSolver implements InferenceSolver {
             final long graphBuildingEnd = System.currentTimeMillis();
             StatisticRecorder.record(StatisticKey.GRAPH_GENERATION_TIME, (graphBuildingEnd - graphBuildingStart));
             solution = graphSolve(constraintGraph, configuration, slots, constraints, qualHierarchy,
-                    processingEnvironment, defaultSerializer);
+                    processingEnvironment, defaultTranslator);
         } else {
             realBackEnd = createBackEnd(backEndType, configuration, slots, constraints, qualHierarchy,
-                    processingEnvironment, lattice, defaultSerializer);
+                    processingEnvironment, lattice, defaultTranslator);
             solution = solve();
         }
 
@@ -157,17 +158,17 @@ public class GeneralSolver implements InferenceSolver {
     }
 
     /**
-     * This method create the default serializer for a given backEndType.
+     * This method create the default translator for a given backEndType.
      *
      * If customized serialization logic is needed, one can override this method and
-     * return a customized serializer corresponding to the given backEndType.
+     * return a customized translator corresponding to the given backEndType.
      *
-     * @param backEndType the backEndType that serializer will associate with.
+     * @param backEndType the backEndType that translator will associate with.
      * @param lattice the target type qualifier lattice.
-     * @return A Serializer compatible with the given backEndType.
+     * @return A Translator compatible with the given backEndType.
      */
-    protected Serializer<?, ?> createSerializer(BackEndType backEndType, Lattice lattice) {
-            return backEndType.createDefaultSerializer(lattice);
+    protected Translator<?, ?, ?> createTranslator(BackEndType backEndType, Lattice lattice) {
+            return backEndType.createDefaultTranslator(lattice);
     }
 
     protected ConstraintGraph generateGraph(Collection<Slot> slots, Collection<Constraint> constraints,
@@ -180,9 +181,9 @@ public class GeneralSolver implements InferenceSolver {
     protected BackEnd<?, ?, ?> createBackEnd(BackEndType backEndType, Map<String, String> configuration,
             Collection<Slot> slots, Collection<Constraint> constraints,
             QualifierHierarchy qualHierarchy, ProcessingEnvironment processingEnvironment,
-            Lattice lattice, Serializer<?, ?> defaultSerializer) {
+            Lattice lattice, Translator<?, ?, ?> defaultTranslator) {
             return backEndType.createBackEnd(configuration, slots,
-                    constraints, qualHierarchy, processingEnvironment, lattice, defaultSerializer);
+                    constraints, qualHierarchy, processingEnvironment, lattice, defaultTranslator);
     }
 
     /**
@@ -211,20 +212,20 @@ public class GeneralSolver implements InferenceSolver {
      * @param constraints
      * @param qualHierarchy
      * @param processingEnvironment
-     * @param defaultSerializer
+     * @param defaultTranslator
      * @return an InferenceSolution for the given slots/constraints
      */
     protected InferenceSolution graphSolve(ConstraintGraph constraintGraph,
             Map<String, String> configuration, Collection<Slot> slots,
             Collection<Constraint> constraints, QualifierHierarchy qualHierarchy,
-            ProcessingEnvironment processingEnvironment, Serializer<?, ?> defaultSerializer) {
+            ProcessingEnvironment processingEnvironment, Translator<?, ?, ?> defaultTranslator) {
 
         List<BackEnd<?, ?, ?>> backEnds = new ArrayList<BackEnd<?, ?, ?>>();
         StatisticRecorder.record(StatisticKey.GRAPH_SIZE, (long) constraintGraph.getIndependentPath().size());
 
         for (Set<Constraint> independentConstraints : constraintGraph.getIndependentPath()) {
             backEnds.add(createBackEnd(backEndType, configuration, slots, independentConstraints,
-                    qualHierarchy, processingEnvironment, lattice, defaultSerializer));
+                    qualHierarchy, processingEnvironment, lattice, defaultTranslator));
         }
         // Clear constraint graph in order to save memory.
         this.constraintGraph = null;

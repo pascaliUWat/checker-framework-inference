@@ -27,20 +27,20 @@ public enum BackEndType {
 
     public final String simpleName;
     public final Class<? extends BackEnd<?, ?, ?>> backEndClass;
-    public final Class<? extends Serializer<?, ?>> serializerClass;
+    public final Class<? extends Translator<?, ?, ?>> translatorClass;
 
     private BackEndType(String simpleName, Class<? extends BackEnd<?, ?, ?>> backEndClass,
-            Class<? extends Serializer<?, ?>> serializerClass) {
+            Class<? extends Translator<?, ?, ?>> translatorClass) {
         this.simpleName = simpleName;
         this.backEndClass = backEndClass;
-        this.serializerClass = serializerClass;
+        this.translatorClass = translatorClass;
     }
 
-    public Serializer<?, ?> createDefaultSerializer(Lattice lattice) {
+    public Translator<?, ?, ?> createDefaultTranslator(Lattice lattice) {
         Constructor<?> cons;
         try {
-            cons = serializerClass.getConstructor(Lattice.class);
-            return (Serializer<?, ?>) cons.newInstance(lattice);
+            cons = translatorClass.getConstructor(Lattice.class);
+            return (Translator<?, ?, ?>) cons.newInstance(lattice);
         } catch (Exception e) {
             ErrorReporter.errorAbort(
                     "Exception happends when creating default serializer for " + simpleName + " backend.", e);
@@ -52,14 +52,14 @@ public enum BackEndType {
     public BackEnd<?, ?, ?> createBackEnd(Map<String, String> configuration,
             Collection<Slot> slots, Collection<Constraint> constraints,
             QualifierHierarchy qualHierarchy, ProcessingEnvironment processingEnvironment,
-            Lattice lattice, Serializer<?, ?> defaultSerializer) {
+            Lattice lattice, Translator<?, ?, ?> defaultTranslator) {
         try {
             Constructor<?> cons = backEndClass.getConstructor(Map.class, Collection.class,
                     Collection.class, QualifierHierarchy.class, ProcessingEnvironment.class,
                     Serializer.class, Lattice.class);
 
             return (BackEnd<?, ?, ?>) cons.newInstance(configuration, slots, constraints, qualHierarchy,
-                    processingEnvironment, defaultSerializer, lattice);
+                    processingEnvironment, defaultTranslator, lattice);
         } catch (Exception e) {
             ErrorReporter.errorAbort(
                     "Exception happends when creating " + simpleName + " backend.", e);

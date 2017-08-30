@@ -22,6 +22,7 @@ import checkers.inference.model.Serializer;
 import checkers.inference.model.Slot;
 import checkers.inference.solver.GeneralSolver;
 import checkers.inference.solver.backend.BackEnd;
+import checkers.inference.solver.backend.Translator;
 import checkers.inference.solver.constraintgraph.ConstraintGraph;
 import checkers.inference.solver.constraintgraph.GraphBuilder;
 import checkers.inference.solver.constraintgraph.Vertex;
@@ -53,7 +54,7 @@ public class DataflowGeneralSolver extends GeneralSolver {
     protected InferenceSolution graphSolve(ConstraintGraph constraintGraph,
             Map<String, String> configuration, Collection<Slot> slots,
             Collection<Constraint> constraints, QualifierHierarchy qualHierarchy,
-            ProcessingEnvironment processingEnvironment, Serializer<?, ?> defaultSerializer) {
+            ProcessingEnvironment processingEnvironment, Translator<?, ?, ?> defaultTranslator) {
 
         DATAFLOW = AnnotationUtils.fromClass(processingEnvironment.getElementUtils(), DataFlow.class);
         DATAFLOWBOTTOM = AnnotationUtils.fromClass(processingEnvironment.getElementUtils(),
@@ -71,16 +72,16 @@ public class DataflowGeneralSolver extends GeneralSolver {
                     AnnotationMirror DATAFLOWTOP = DataflowUtils.createDataflowAnnotation(
                             DataflowUtils.convert(dataflowValues), processingEnvironment);
                     TwoQualifiersLattice latticeFor2 = new LatticeBuilder().buildTwoTypeLattice(DATAFLOWTOP, DATAFLOWBOTTOM);
-                    Serializer<?, ?> serializer = createSerializer(backEndType, latticeFor2);
+                    Translator<?, ?, ?> translator = createTranslator(backEndType, latticeFor2);
                     backEnds.add(createBackEnd(backEndType, configuration, slots, entry.getValue(),
-                            qualHierarchy, processingEnvironment, latticeFor2, serializer));
+                            qualHierarchy, processingEnvironment, latticeFor2, translator));
                 } else if (dataflowRoots.length == 1) {
                     AnnotationMirror DATAFLOWTOP = DataflowUtils.createDataflowAnnotationForByte(
                             DataflowUtils.convert(dataflowRoots), processingEnvironment);
                     TwoQualifiersLattice latticeFor2 = new LatticeBuilder().buildTwoTypeLattice(DATAFLOWTOP, DATAFLOWBOTTOM);
-                    Serializer<?, ?> serializer = createSerializer(backEndType, latticeFor2);
+                    Translator<?, ?, ?> translator = createTranslator(backEndType, latticeFor2);
                     backEnds.add(createBackEnd(backEndType, configuration, slots, entry.getValue(),
-                            qualHierarchy, processingEnvironment, latticeFor2, serializer));
+                            qualHierarchy, processingEnvironment, latticeFor2, translator));
                 }
             }
         }

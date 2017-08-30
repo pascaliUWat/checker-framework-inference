@@ -56,7 +56,7 @@ public enum BackEndType {
         try {
             Constructor<?> cons = backEndClass.getConstructor(Map.class, Collection.class,
                     Collection.class, QualifierHierarchy.class, ProcessingEnvironment.class,
-                    Serializer.class, Lattice.class);
+                    Translator.class, Lattice.class);
 
             return (BackEnd<?, ?, ?>) cons.newInstance(configuration, slots, constraints, qualHierarchy,
                     processingEnvironment, defaultTranslator, lattice);

@@ -172,7 +172,7 @@ public class MaxSatBackEnd extends BackEnd<VecInt[], VecInt[], Integer> {
             if (var > 0) {
                 var = var - 1;
                 int slotId = MathUtils.getSlotId(var, lattice);
-                AnnotationMirror type = realTranslator.decodeSolution(var);
+                AnnotationMirror type = realTranslator.decodeSolution(var, processingEnvironment);
                 result.put(slotId, type);
             }
         }

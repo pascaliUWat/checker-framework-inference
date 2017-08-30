@@ -1,5 +1,6 @@
 package checkers.inference.solver.backend;
 
+import javax.annotation.processing.ProcessingEnvironment;
 import javax.lang.model.element.AnnotationMirror;
 
 import checkers.inference.model.Serializer;
@@ -22,7 +23,8 @@ public interface Translator<S, T, A> extends Serializer<S, T> {
      * Decode solver's solution of a Slot to an AnnotationMirror represent this solution.
      *
      * @param solution solver's solution of a Slot
+     * @param processingEnvironment the process environment for creating the AnnotationMirror, if needed
      * @return AnnotationMirror represent this solution
      */
-    AnnotationMirror decodeSolution(A solution);
+    AnnotationMirror decodeSolution(A solution, ProcessingEnvironment processingEnvironment);
 }

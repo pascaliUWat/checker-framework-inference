@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.annotation.processing.ProcessingEnvironment;
 import javax.lang.model.element.AnnotationMirror;
 
 import org.checkerframework.javacutil.AnnotationUtils;
@@ -438,12 +439,6 @@ public class MaxSatTranslator implements Translator<VecInt[], VecInt[], Integer>
 
     protected static final VecInt[] emptyClauses = new VecInt[0];
 
-    @Override
-    public AnnotationMirror decodeSolution(Integer var) {
-        return intToType.get(MathUtils.getIntRep(var, lattice));
-    }
-
-
     /**
      * generate well form clauses such that there is one and only one beta value
      * can be true.
@@ -465,6 +460,12 @@ public class MaxSatTranslator implements Translator<VecInt[], VecInt[], Integer>
                 clauses.add(vecInt);
             }
         }
+    }
+
+
+    @Override
+    public AnnotationMirror decodeSolution(Integer var, ProcessingEnvironment processingEnvironment) {
+        return intToType.get(MathUtils.getIntRep(var, lattice));
     }
 
 }

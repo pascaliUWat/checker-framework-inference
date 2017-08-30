@@ -77,8 +77,7 @@ public class DataflowGeneralSolver extends GeneralSolver {
                 } else if (dataflowRoots.length == 1) {
                     AnnotationMirror DATAFLOWTOP = DataflowUtils.createDataflowAnnotationForByte(
                             DataflowUtils.convert(dataflowRoots), processingEnvironment);
-                    TwoQualifiersLattice latticeFor2 = createTwoQualifierLattice(DATAFLOWTOP,
-                            DATAFLOWBOTTOM);
+                    TwoQualifiersLattice latticeFor2 = new LatticeBuilder().buildTwoTypeLattice(DATAFLOWTOP, DATAFLOWBOTTOM);
                     Serializer<?, ?> serializer = createSerializer(backEndType, latticeFor2);
                     backEnds.add(createBackEnd(backEndType, configuration, slots, entry.getValue(),
                             qualHierarchy, processingEnvironment, latticeFor2, serializer));

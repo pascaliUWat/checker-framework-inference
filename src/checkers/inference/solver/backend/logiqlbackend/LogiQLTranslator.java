@@ -1,5 +1,6 @@
 package checkers.inference.solver.backend.logiqlbackend;
 
+import javax.annotation.processing.ProcessingEnvironment;
 import javax.lang.model.element.AnnotationMirror;
 
 import checkers.inference.model.CombVariableSlot;
@@ -253,7 +254,7 @@ public class LogiQLTranslator implements Translator<String, String, String> {
     public static final String emptyString = "";
 
     @Override
-    public AnnotationMirror decodeSolution(String solution) {
+    public AnnotationMirror decodeSolution(String solution, ProcessingEnvironment processingEnvironment) {
         // TODO Refactor LogiQL backend to follow the design protocal.
         return null;
     }

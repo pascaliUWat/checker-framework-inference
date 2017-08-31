@@ -9,7 +9,6 @@ services:
 
 matrix:
 env:
-  - JDKVER=jdk7
   - JDKVER=jdk8
 
 # This is essential lest the script is ignored and Travis just runs gradle.
@@ -59,6 +58,10 @@ after-script:
     curl -sSL https://raw.githubusercontent.com/mernst/travis-after-all/master/lib/travis-after-all.js | tac | tac | nodejs
     exitCode=$?
     echo "exitCode=$exitCode TRAVIS_BRANCH=$TRAVIS_BRANCH TRAVIS_PULL_REQUEST=$TRAVIS_PULL_REQUEST"
+
+jdk:
+#  - openjdk7
+  - oraclejdk8
 
 # TODO: add down-stream project travis tests
 

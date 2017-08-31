@@ -31,8 +31,9 @@ import checkers.inference.solver.frontend.Lattice;
  * 
  * @author jianchu
  *
- * @param <S> Encoding type for slot.
- * @param <T> Encdoing type for constraint.
+ * @param <S> encoding type for slot
+ * @param <T> encdoing type for constraint
+ * @param <A> type for underlying solver's solution of a Slot
  */
 public abstract class BackEnd<S, T, A> {
 

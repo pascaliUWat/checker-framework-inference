@@ -1,0 +1,38 @@
+#!/bin/sh
+
+myDir="`dirname $0`"
+case `uname -s` in
+    CYGWIN*)
+      myDir=`cygpath -m $mydir`
+      ;;
+esac
+
+if [ "$myDir" = "" ];
+then
+    myDir="."
+fi
+
+ROOT=$(cd ${myDir}/../../ && pwd)
+
+echo "Checking if we already have built Z3..."
+
+if [ -e $ROOT/checker-framework-inference/lib/com.microsoft.z3.jar ] ; then
+    echo "Found existed build result in $ROOT/checker-framework-inference/lib, skip rebuild z3."
+else
+    echo "No build result found, building Z3..."
+
+    if [ -d $ROOT/z3 ] ; then
+        # Update Z3
+        (cd $ROOT/z3 && git pull)
+    else
+        (cd $ROOT && git clone --depth 1 https://github.com/Z3Prover/z3.git)
+    fi
+    # Build Z3
+    (cd $ROOT/z3 && python scripts/mk_make.py --java)
+    (cd $ROOT/z3/build && make)
+fi
+
+# Copy build result into CFI lib dir
+echo "Copying $ROOT/z3/build/com.microsoft.z3.jar into $ROOT/checker-framework-inference/lib"
+(cp $ROOT/z3/build/com.microsoft.z3.jar $ROOT/checker-framework-inference/lib)
+echo "Copy done."

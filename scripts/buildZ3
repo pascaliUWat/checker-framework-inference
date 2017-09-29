@@ -45,6 +45,6 @@ echo "Copying $ROOT/z3/build/libz3.dylib into $ROOT/checker-framework-inference/
 (cp $ROOT/z3/build/libz3.dylib $ROOT/checker-framework-inference/lib)
 echo "Copy done."
 
-echo "Copying $ROOT/z3/build/libz3java.dylib into $ROOT/checker-framework-inference/lib"
+echo "Copying $ROOT/z3/build/libz3java.dylibl into $ROOT/checker-framework-inference/lib"
 (cp $ROOT/z3/build/libz3java.dylib $ROOT/checker-framework-inference/lib)
 echo "Copy done."

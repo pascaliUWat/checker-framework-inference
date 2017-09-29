@@ -1,5 +1,8 @@
 #!/bin/sh
 
+# Fail the whole script if any command fails
+set -e
+
 myDir="`dirname $0`"
 case `uname -s` in
     CYGWIN*)

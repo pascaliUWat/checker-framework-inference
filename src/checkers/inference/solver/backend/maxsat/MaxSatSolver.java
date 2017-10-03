@@ -1,4 +1,4 @@
-package checkers.inference.solver.backend.maxsatbackend;
+package checkers.inference.solver.backend.maxsat;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -23,20 +23,20 @@ import checkers.inference.SlotManager;
 import checkers.inference.model.Constraint;
 import checkers.inference.model.PreferenceConstraint;
 import checkers.inference.model.Slot;
-import checkers.inference.solver.backend.BackEnd;
-import checkers.inference.solver.backend.Translator;
+import checkers.inference.solver.backend.SolverAdapter;
+import checkers.inference.solver.backend.FormatTranslator;
 import checkers.inference.solver.frontend.Lattice;
 import checkers.inference.solver.util.StatisticRecorder;
 import checkers.inference.solver.util.StatisticRecorder.StatisticKey;
 
 /**
- * MaxSatBackEnd calls MaxSatSerializer that converts constraint into a list of
+ * MaxSatSolver calls MaxSatFormatTranslator that converts constraint into a list of
  * VecInt, then invoke Sat4j lib to solve the clauses, and decode the result.
  * 
  * @author jianchu
  *
  */
-public class MaxSatBackEnd extends BackEnd<VecInt[], VecInt[], Integer> {
+public class MaxSatSolver extends SolverAdapter<VecInt[], VecInt[], Integer> {
 
     protected final SlotManager slotManager;
     protected final List<VecInt> hardClauses = new LinkedList<VecInt>();
@@ -49,11 +49,11 @@ public class MaxSatBackEnd extends BackEnd<VecInt[], VecInt[], Integer> {
     protected long solvingStart;
     protected long solvingEnd;
 
-    public MaxSatBackEnd(Map<String, String> configuration, Collection<Slot> slots,
+    public MaxSatSolver(Map<String, String> configuration, Collection<Slot> slots,
             Collection<Constraint> constraints, QualifierHierarchy qualHierarchy,
-            ProcessingEnvironment processingEnvironment, Translator<VecInt[], VecInt[], Integer> realSerializer,
+            ProcessingEnvironment processingEnvironment, FormatTranslator<VecInt[], VecInt[], Integer> formatTranslator,
             Lattice lattice) {
-        super(configuration, slots, constraints, qualHierarchy, processingEnvironment, realSerializer,
+        super(configuration, slots, constraints, qualHierarchy, processingEnvironment, formatTranslator,
                 lattice);
         this.slotManager = InferenceMain.getInstance().getSlotManager();
 
@@ -84,7 +84,7 @@ public class MaxSatBackEnd extends BackEnd<VecInt[], VecInt[], Integer> {
         // THe cons would be we will add one more type parameter on BackEnd class,
         // which makes BackEnd really complicate (we will have 4 type parameters on
         // a single class!).
-        MaxSatTranslator maxSatTranslator = (MaxSatTranslator) realTranslator;
+        MaxSatFormatTranslator maxSatTranslator = (MaxSatFormatTranslator) formatTranslator;
         for (Integer varSlotId : this.varSlotIds) {
             maxSatTranslator.generateOneHotClauses(hardClauses, varSlotId);
         }
@@ -154,7 +154,7 @@ public class MaxSatBackEnd extends BackEnd<VecInt[], VecInt[], Integer> {
     public void convertAll() {
         for (Constraint constraint : constraints) {
             collectVarSlots(constraint);
-            for (VecInt res : constraint.serialize(realTranslator)) {
+            for (VecInt res : constraint.serialize(formatTranslator)) {
                 if (res != null && res.size() != 0) {
                     if (constraint instanceof PreferenceConstraint) {
                         softClauses.add(res);
@@ -172,7 +172,7 @@ public class MaxSatBackEnd extends BackEnd<VecInt[], VecInt[], Integer> {
             if (var > 0) {
                 var = var - 1;
                 int slotId = MathUtils.getSlotId(var, lattice);
-                AnnotationMirror type = realTranslator.decodeSolution(var, processingEnvironment);
+                AnnotationMirror type = formatTranslator.decodeSolution(var, processingEnvironment);
                 result.put(slotId, type);
             }
         }

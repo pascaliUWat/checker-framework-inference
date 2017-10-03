@@ -1,4 +1,4 @@
-package checkers.inference.solver.backend.maxsatbackend;
+package checkers.inference.solver.backend.maxsat;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -28,19 +28,19 @@ import checkers.inference.model.PreferenceConstraint;
 import checkers.inference.model.RefinementVariableSlot;
 import checkers.inference.model.SubtypeConstraint;
 import checkers.inference.model.VariableSlot;
-import checkers.inference.solver.backend.Translator;
+import checkers.inference.solver.backend.FormatTranslator;
 import checkers.inference.solver.frontend.Lattice;
 import checkers.inference.solver.frontend.VariableCombos;
 import checkers.inference.solver.util.VectorUtils;
 
 /**
- * MaxSatSerializer converts constraint into array of VecInt as clauses.
+ * MaxSatFormatTranslator converts constraint into array of VecInt as clauses.
  * 
  * @author jianchu
  *
  */
 
-public class MaxSatTranslator implements Translator<VecInt[], VecInt[], Integer> {
+public class MaxSatFormatTranslator implements FormatTranslator<VecInt[], VecInt[], Integer> {
 
     protected final Lattice lattice;
 
@@ -57,7 +57,7 @@ public class MaxSatTranslator implements Translator<VecInt[], VecInt[], Integer>
     protected final Map<Integer, AnnotationMirror> intToType;
 
 
-    public MaxSatTranslator(Lattice lattice) {
+    public MaxSatFormatTranslator(Lattice lattice) {
         this.lattice = lattice;
 
         // Initialize mappings between type and int.

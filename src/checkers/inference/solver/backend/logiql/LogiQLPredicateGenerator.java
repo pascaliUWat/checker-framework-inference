@@ -1,4 +1,4 @@
-package checkers.inference.solver.backend.logiqlbackend;
+package checkers.inference.solver.backend.logiql;
 
 import java.io.PrintWriter;
 import java.util.Collection;

@@ -1,4 +1,4 @@
-package checkers.inference.solver.backend.logiqlbackend;
+package checkers.inference.solver.backend.logiql;
 
 import javax.annotation.processing.ProcessingEnvironment;
 import javax.lang.model.element.AnnotationMirror;
@@ -15,21 +15,21 @@ import checkers.inference.model.PreferenceConstraint;
 import checkers.inference.model.RefinementVariableSlot;
 import checkers.inference.model.SubtypeConstraint;
 import checkers.inference.model.VariableSlot;
-import checkers.inference.solver.backend.Translator;
+import checkers.inference.solver.backend.FormatTranslator;
 import checkers.inference.solver.frontend.Lattice;
 import checkers.inference.solver.frontend.VariableCombos;
 import checkers.inference.solver.util.NameUtils;
 
 /**
- * LogiQLSerializer converts constraint into string as logiQL data.
+ * LogiQLFormatTranslator converts constraint into string as logiQL data.
  * 
  * @author jianchu
  *
  */
-public class LogiQLTranslator implements Translator<String, String, String> {
+public class LogiQLFormatTranslator implements FormatTranslator<String, String, String> {
 
 
-    public LogiQLTranslator(Lattice lattice) {
+    public LogiQLFormatTranslator(Lattice lattice) {
 
     }
 

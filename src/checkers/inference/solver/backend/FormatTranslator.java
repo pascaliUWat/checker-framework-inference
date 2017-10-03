@@ -17,7 +17,7 @@ import checkers.inference.model.Serializer;
  * @param <T> encoding type for constraint.
  * @param <A> type for underlying solver's solution of a Slot
  */
-public interface Translator<S, T, A> extends Serializer<S, T> {
+public interface FormatTranslator<S, T, A> extends Serializer<S, T> {
 
     /**
      * Decode solver's solution of a Slot to an AnnotationMirror represent this solution.

@@ -13,16 +13,16 @@ import javax.lang.model.element.AnnotationMirror;
 
 import org.checkerframework.framework.type.QualifierHierarchy;
 import org.checkerframework.javacutil.AnnotationUtils;
+import org.checkerframework.javacutil.AnnotationBuilder;
 
 import checkers.inference.DefaultInferenceSolution;
 import checkers.inference.InferenceMain;
 import checkers.inference.InferenceSolution;
 import checkers.inference.model.Constraint;
-import checkers.inference.model.Serializer;
 import checkers.inference.model.Slot;
-import checkers.inference.solver.GeneralSolver;
-import checkers.inference.solver.backend.BackEnd;
-import checkers.inference.solver.backend.Translator;
+import checkers.inference.solver.SolverEngine;
+import checkers.inference.solver.backend.SolverAdapter;
+import checkers.inference.solver.backend.FormatTranslator;
 import checkers.inference.solver.constraintgraph.ConstraintGraph;
 import checkers.inference.solver.constraintgraph.GraphBuilder;
 import checkers.inference.solver.constraintgraph.Vertex;
@@ -44,7 +44,7 @@ import dataflow.util.DataflowUtils;
  * @author jianchu
  *
  */
-public class DataflowGeneralSolver extends GeneralSolver {
+public class DataflowSolverEngine extends SolverEngine {
 
     private AnnotationMirror DATAFLOW;
     private AnnotationMirror DATAFLOWBOTTOM;
@@ -54,13 +54,13 @@ public class DataflowGeneralSolver extends GeneralSolver {
     protected InferenceSolution graphSolve(ConstraintGraph constraintGraph,
             Map<String, String> configuration, Collection<Slot> slots,
             Collection<Constraint> constraints, QualifierHierarchy qualHierarchy,
-            ProcessingEnvironment processingEnvironment, Translator<?, ?, ?> defaultTranslator) {
+            ProcessingEnvironment processingEnvironment, FormatTranslator<?, ?, ?> defaultTranslator) {
 
-        DATAFLOW = AnnotationUtils.fromClass(processingEnvironment.getElementUtils(), DataFlow.class);
-        DATAFLOWBOTTOM = AnnotationUtils.fromClass(processingEnvironment.getElementUtils(),
+        DATAFLOW = AnnotationBuilder.fromClass(processingEnvironment.getElementUtils(), DataFlow.class);
+        DATAFLOWBOTTOM = AnnotationBuilder.fromClass(processingEnvironment.getElementUtils(),
                 DataFlowInferenceBottom.class);
 
-        List<BackEnd<?, ?, ?>> backEnds = new ArrayList<>();
+        List<SolverAdapter<?, ?, ?>> solvers = new ArrayList<>();
         StatisticRecorder.record(StatisticKey.GRAPH_SIZE, (long) constraintGraph.getConstantPath()
                 .size());
         for (Map.Entry<Vertex, Set<Constraint>> entry : constraintGraph.getConstantPath().entrySet()) {
@@ -72,27 +72,27 @@ public class DataflowGeneralSolver extends GeneralSolver {
                     AnnotationMirror DATAFLOWTOP = DataflowUtils.createDataflowAnnotation(
                             DataflowUtils.convert(dataflowValues), processingEnvironment);
                     TwoQualifiersLattice latticeFor2 = new LatticeBuilder().buildTwoTypeLattice(DATAFLOWTOP, DATAFLOWBOTTOM);
-                    Translator<?, ?, ?> translator = createTranslator(backEndType, latticeFor2);
-                    backEnds.add(createBackEnd(backEndType, configuration, slots, entry.getValue(),
+                    FormatTranslator<?, ?, ?> translator = createFormatTranslator(solverType, latticeFor2);
+                    solvers.add(createSolverAdapter(solverType, configuration, slots, entry.getValue(),
                             qualHierarchy, processingEnvironment, latticeFor2, translator));
                 } else if (dataflowRoots.length == 1) {
                     AnnotationMirror DATAFLOWTOP = DataflowUtils.createDataflowAnnotationForByte(
                             DataflowUtils.convert(dataflowRoots), processingEnvironment);
                     TwoQualifiersLattice latticeFor2 = new LatticeBuilder().buildTwoTypeLattice(DATAFLOWTOP, DATAFLOWBOTTOM);
-                    Translator<?, ?, ?> translator = createTranslator(backEndType, latticeFor2);
-                    backEnds.add(createBackEnd(backEndType, configuration, slots, entry.getValue(),
+                    FormatTranslator<?, ?, ?> translator = createFormatTranslator(solverType, latticeFor2);
+                    solvers.add(createSolverAdapter(solverType, configuration, slots, entry.getValue(),
                             qualHierarchy, processingEnvironment, latticeFor2, translator));
                 }
             }
         }
-        return mergeSolution(solve(backEnds));
+        return mergeSolution(solve(solvers));
     }
 
     @Override
     protected ConstraintGraph generateGraph(Collection<Slot> slots, Collection<Constraint> constraints,
             ProcessingEnvironment processingEnvironment) {
         this.processingEnvironment = processingEnvironment;
-        AnnotationMirror DATAFLOWTOP = AnnotationUtils.fromClass(
+        AnnotationMirror DATAFLOWTOP = AnnotationBuilder.fromClass(
                 processingEnvironment.getElementUtils(), DataFlowTop.class);
         GraphBuilder graphBuilder = new GraphBuilder(slots, constraints, DATAFLOWTOP);
         ConstraintGraph constraintGraph = graphBuilder.buildGraph();

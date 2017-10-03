@@ -46,7 +46,7 @@ public class LingelingSolver extends MaxSatSolver {
 
     public LingelingSolver(Map<String, String> configuration, Collection<Slot> slots,
             Collection<Constraint> constraints, QualifierHierarchy qualHierarchy,
-            ProcessingEnvironment processingEnvironment, FormatTranslator<VecInt[], VecInt[], Integer> formatTranslator,
+            ProcessingEnvironment processingEnvironment, MaxSatFormatTranslator formatTranslator,
             Lattice lattice) {
         super(configuration, slots, constraints, qualHierarchy, processingEnvironment, formatTranslator,
                 lattice);

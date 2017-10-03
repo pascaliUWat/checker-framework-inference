@@ -36,11 +36,9 @@ import checkers.inference.solver.frontend.Lattice;
  * 
  * @author jianchu
  *
- * @param <S> encoding type for slot
- * @param <T> encdoing type for constraint
- * @param <A> type for underlying solver's solution of a Slot
+ * @param <T> type of FormatTranslator required by this SolverAdapter
  */
-public abstract class SolverAdapter<S, T, A> {
+public abstract class SolverAdapter<T extends FormatTranslator<?, ?, ?>> {
 
     /**
      * String key value pairs to configure the solver
@@ -68,7 +66,7 @@ public abstract class SolverAdapter<S, T, A> {
      * translator for encoding inference slots and constraints to underlying solver's constraints,
      * and decoding underlying solver's solution back to AnnotationMirrors.
      */
-    protected final FormatTranslator<S, T, A> formatTranslator;
+    protected final T formatTranslator;
 
     /**
      * Set of ids of all variable solts will be used by underlying solver
@@ -82,13 +80,13 @@ public abstract class SolverAdapter<S, T, A> {
 
     public SolverAdapter(Map<String, String> configuration, Collection<Slot> slots,
             Collection<Constraint> constraints, QualifierHierarchy qualHierarchy,
-            ProcessingEnvironment processingEnvironment, FormatTranslator<S, T, A> realTranslator, Lattice lattice) {
+            ProcessingEnvironment processingEnvironment, T formatTranslator, Lattice lattice) {
         this.configuration = configuration;
         this.slots = slots;
         this.constraints = constraints;
         this.qualHierarchy = qualHierarchy;
         this.processingEnvironment = processingEnvironment;
-        this.formatTranslator = realTranslator;
+        this.formatTranslator = formatTranslator;
         this.varSlotIds = new HashSet<Integer>();
         this.lattice = lattice;
     }

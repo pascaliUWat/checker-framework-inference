@@ -60,7 +60,7 @@ public class SolverEngine implements InferenceSolver {
     protected boolean collectStatistic;
     protected Lattice lattice;
     protected ConstraintGraph constraintGraph;
-    protected SolverAdapter<?, ?, ?> underlyingSolver;
+    protected SolverAdapter<?> underlyingSolver;
 
     // Timing variables:
     private long solvingStart;
@@ -178,7 +178,7 @@ public class SolverEngine implements InferenceSolver {
         return constraintGraph;
     }
 
-    protected SolverAdapter<?, ?, ?> createSolverAdapter(SolverType solverType, Map<String, String> configuration,
+    protected SolverAdapter<?> createSolverAdapter(SolverType solverType, Map<String, String> configuration,
             Collection<Slot> slots, Collection<Constraint> constraints,
             QualifierHierarchy qualHierarchy, ProcessingEnvironment processingEnvironment,
             Lattice lattice, FormatTranslator<?, ?, ?> formatTranslator) {
@@ -220,7 +220,7 @@ public class SolverEngine implements InferenceSolver {
             Collection<Constraint> constraints, QualifierHierarchy qualHierarchy,
             ProcessingEnvironment processingEnvironment, FormatTranslator<?, ?, ?> formatTranslator) {
 
-        List<SolverAdapter<?, ?, ?>> underlyingSolvers = new ArrayList<SolverAdapter<?, ?, ?>>();
+        List<SolverAdapter<?>> underlyingSolvers = new ArrayList<SolverAdapter<?>>();
         StatisticRecorder.record(StatisticKey.GRAPH_SIZE, (long) constraintGraph.getIndependentPath().size());
 
         for (Set<Constraint> independentConstraints : constraintGraph.getIndependentPath()) {
@@ -239,7 +239,7 @@ public class SolverEngine implements InferenceSolver {
      * @param underlyingSolvers
      * @return A list of Map that contains solutions from all back ends.
      */
-    protected List<Map<Integer, AnnotationMirror>> solve(List<SolverAdapter<?, ?, ?>> underlyingSolvers) {
+    protected List<Map<Integer, AnnotationMirror>> solve(List<SolverAdapter<?>> underlyingSolvers) {
 
         List<Map<Integer, AnnotationMirror>> inferenceSolutionMaps = new LinkedList<Map<Integer, AnnotationMirror>>();
 
@@ -265,14 +265,14 @@ public class SolverEngine implements InferenceSolver {
      * @throws InterruptedException
      * @throws ExecutionException
      */
-    protected List<Map<Integer, AnnotationMirror>> solveInparallel(List<SolverAdapter<?, ?, ?>> underlyingSolvers)
+    protected List<Map<Integer, AnnotationMirror>> solveInparallel(List<SolverAdapter<?>> underlyingSolvers)
             throws InterruptedException, ExecutionException {
 
         ExecutorService service = Executors.newFixedThreadPool(30);
         List<Future<Map<Integer, AnnotationMirror>>> futures = new ArrayList<Future<Map<Integer, AnnotationMirror>>>();
 
         solvingStart = System.currentTimeMillis();
-        for (final SolverAdapter<?, ?, ?> underlyingSolver : underlyingSolvers) {
+        for (final SolverAdapter<?> underlyingSolver : underlyingSolvers) {
             Callable<Map<Integer, AnnotationMirror>> callable = new Callable<Map<Integer, AnnotationMirror>>() {
                 @Override
                 public Map<Integer, AnnotationMirror> call() throws Exception {
@@ -299,12 +299,12 @@ public class SolverEngine implements InferenceSolver {
      * @param underlyingSolvers
      * @return A list of Map that contains solutions from all underlying solvers.
      */
-    protected List<Map<Integer, AnnotationMirror>> solveInSequential(List<SolverAdapter<?, ?, ?>> underlyingSolvers) {
+    protected List<Map<Integer, AnnotationMirror>> solveInSequential(List<SolverAdapter<?>> underlyingSolvers) {
 
         List<Map<Integer, AnnotationMirror>> solutions = new ArrayList<>();
 
         solvingStart = System.currentTimeMillis();
-        for (final SolverAdapter<?, ?, ?> underlyingSolver : underlyingSolvers) {
+        for (final SolverAdapter<?> underlyingSolver : underlyingSolvers) {
             solutions.add(underlyingSolver.solve());
         }
         solvingEnd = System.currentTimeMillis();

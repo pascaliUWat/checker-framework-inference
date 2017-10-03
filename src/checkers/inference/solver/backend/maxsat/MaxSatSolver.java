@@ -36,7 +36,7 @@ import checkers.inference.solver.util.StatisticRecorder.StatisticKey;
  * @author jianchu
  *
  */
-public class MaxSatSolver extends SolverAdapter<VecInt[], VecInt[], Integer> {
+public class MaxSatSolver extends SolverAdapter<MaxSatFormatTranslator> {
 
     protected final SlotManager slotManager;
     protected final List<VecInt> hardClauses = new LinkedList<VecInt>();
@@ -51,7 +51,7 @@ public class MaxSatSolver extends SolverAdapter<VecInt[], VecInt[], Integer> {
 
     public MaxSatSolver(Map<String, String> configuration, Collection<Slot> slots,
             Collection<Constraint> constraints, QualifierHierarchy qualHierarchy,
-            ProcessingEnvironment processingEnvironment, FormatTranslator<VecInt[], VecInt[], Integer> formatTranslator,
+            ProcessingEnvironment processingEnvironment, MaxSatFormatTranslator formatTranslator,
             Lattice lattice) {
         super(configuration, slots, constraints, qualHierarchy, processingEnvironment, formatTranslator,
                 lattice);

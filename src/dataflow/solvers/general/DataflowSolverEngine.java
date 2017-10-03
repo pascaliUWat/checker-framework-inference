@@ -60,7 +60,7 @@ public class DataflowSolverEngine extends SolverEngine {
         DATAFLOWBOTTOM = AnnotationBuilder.fromClass(processingEnvironment.getElementUtils(),
                 DataFlowInferenceBottom.class);
 
-        List<SolverAdapter<?, ?, ?>> solvers = new ArrayList<>();
+        List<SolverAdapter<?>> solvers = new ArrayList<>();
         StatisticRecorder.record(StatisticKey.GRAPH_SIZE, (long) constraintGraph.getConstantPath()
                 .size());
         for (Map.Entry<Vertex, Set<Constraint>> entry : constraintGraph.getConstantPath().entrySet()) {

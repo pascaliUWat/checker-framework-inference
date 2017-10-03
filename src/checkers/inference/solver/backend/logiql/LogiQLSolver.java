@@ -30,7 +30,7 @@ import checkers.inference.solver.util.StatisticRecorder.StatisticKey;
  * @author jianchu
  *
  */
-public class LogiQLSolver extends SolverAdapter<String, String, String> {
+public class LogiQLSolver extends SolverAdapter<LogiQLFormatTranslator> {
 
     private final StringBuilder logiQLText = new StringBuilder();
     private final File logiqldata = new File(new File("").getAbsolutePath() + "/logiqldata");
@@ -41,9 +41,9 @@ public class LogiQLSolver extends SolverAdapter<String, String, String> {
     private long solvingEnd;
     public LogiQLSolver(Map<String, String> configuration, Collection<Slot> slots,
             Collection<Constraint> constraints, QualifierHierarchy qualHierarchy,
-            ProcessingEnvironment processingEnvironment, FormatTranslator<String, String, String> realTranslator,
+            ProcessingEnvironment processingEnvironment, LogiQLFormatTranslator formatTranslator,
             Lattice lattice) {
-        super(configuration, slots, constraints, qualHierarchy, processingEnvironment, realTranslator,
+        super(configuration, slots, constraints, qualHierarchy, processingEnvironment, formatTranslator,
                 lattice);
         logiqldata.mkdir();
     }

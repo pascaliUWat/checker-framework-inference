@@ -26,13 +26,13 @@ public enum SolverType {
     LOGIQL("LogiQL", LogiQLSolver.class, LogiQLFormatTranslator.class);
 
     public final String simpleName;
-    public final Class<? extends SolverAdapter<?, ?, ?>> solverAdapterClass;
+    public final Class<? extends SolverAdapter<?>> solverAdapterClass;
     public final Class<? extends FormatTranslator<?, ?, ?>> translatorClass;
 
-    private SolverType(String simpleName, Class<? extends SolverAdapter<?, ?, ?>> backEndClass,
+    private SolverType(String simpleName, Class<? extends SolverAdapter<?>> solverAdapterClass,
             Class<? extends FormatTranslator<?, ?, ?>> translatorClass) {
         this.simpleName = simpleName;
-        this.solverAdapterClass = backEndClass;
+        this.solverAdapterClass = solverAdapterClass;
         this.translatorClass = translatorClass;
     }
 
@@ -49,17 +49,17 @@ public enum SolverType {
         }
     }
 
-    public SolverAdapter<?, ?, ?> createSolverAdapter(Map<String, String> configuration,
+    public SolverAdapter<?> createSolverAdapter(Map<String, String> configuration,
             Collection<Slot> slots, Collection<Constraint> constraints,
             QualifierHierarchy qualHierarchy, ProcessingEnvironment processingEnvironment,
-            Lattice lattice, FormatTranslator<?, ?, ?> defaultTranslator) {
+            Lattice lattice, FormatTranslator<?, ?, ?> formatTranslator) {
         try {
             Constructor<?> cons = solverAdapterClass.getConstructor(Map.class, Collection.class,
                     Collection.class, QualifierHierarchy.class, ProcessingEnvironment.class,
                     FormatTranslator.class, Lattice.class);
 
-            return (SolverAdapter<?, ?, ?>) cons.newInstance(configuration, slots, constraints, qualHierarchy,
-                    processingEnvironment, defaultTranslator, lattice);
+            return (SolverAdapter<?>) cons.newInstance(configuration, slots, constraints, qualHierarchy,
+                    processingEnvironment, formatTranslator, lattice);
         } catch (Exception e) {
             ErrorReporter.errorAbort(
                     "Exception happends when creating " + simpleName + " backend.", e);

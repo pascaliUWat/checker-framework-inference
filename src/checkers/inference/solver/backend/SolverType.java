@@ -56,7 +56,7 @@ public enum SolverType {
         try {
             Constructor<?> cons = solverAdapterClass.getConstructor(Map.class, Collection.class,
                     Collection.class, QualifierHierarchy.class, ProcessingEnvironment.class,
-                    FormatTranslator.class, Lattice.class);
+                    translatorClass.getClass(), Lattice.class);
 
             return (SolverAdapter<?>) cons.newInstance(configuration, slots, constraints, qualHierarchy,
                     processingEnvironment, formatTranslator, lattice);

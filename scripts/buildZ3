@@ -15,24 +15,30 @@ then
     myDir="."
 fi
 
+UBUNTU_Z3="https://github.com/Z3Prover/z3/releases/download/z3-4.5.0/z3-4.5.0-x64-ubuntu-14.04.zip"
+
+MAC_Z3="https://github.com/Z3Prover/z3/releases/download/z3-4.5.0/z3-4.5.0-x64-osx-10.11.6.zip"
+
+if [[ "$OSTYPE" == "darwin"* ]]; then
+    Z3_ZIP=$MAC_Z3
+else
+    # Assume it is ubuntu OS.
+    Z3_ZIP=$UBUNTU_Z3
+fi
+
+
 ROOT=$(cd ${myDir}/../../ && pwd)
 
-echo "Checking if we already have built Z3..."
-
-if [ -e $ROOT/checker-framework-inference/lib/com.microsoft.z3.jar ] ; then
-    echo "Found existed build result in $ROOT/checker-framework-inference/lib, skip rebuild z3."
+# As z3 jar file and dylib files should either both existed or not exisit,
+# so just check if the jar file exisited.
+if [ -e $ROOT/z3/bin/com.microsoft.z3.jar ] ; then
+    echo "Found existed z3 in $ROOT/z3/bin/, skip downloading z3."
 else
-    echo "No build result found, building Z3..."
-
-    if [ -d $ROOT/z3 ] ; then
-        # Update Z3
-        (cd $ROOT/z3 && git pull)
-    else
-        (cd $ROOT && git clone --depth 1 https://github.com/Z3Prover/z3.git)
-    fi
-    # Build Z3
-    (cd $ROOT/z3 && python scripts/mk_make.py --java)
-    (cd $ROOT/z3/build && make)
+    echo "Downloading Z3 from $Z3_ZIP..."
+    echo "Running cmd: (cd $ROOT && wget $Z3_ZIP -O z3.zip && unzip z3.zip && mv $ROOT/z3-* $ROOT/z3)"
+    (cd $ROOT && wget $Z3_ZIP -O z3.zip && unzip z3.zip && mv $ROOT/z3-* $ROOT/z3)
+    echo "cmd: (cd $ROOT && wget $Z3_ZIP -O z3.zip && unzip z3.zip && mv $ROOT/z3-* $ROOT/z3) Done."
+    echo "Downloaded z3 into directory $ROOT/z3"
 fi
 
 if [ ! -d $ROOT/checker-framework-inference/lib ] ; then
@@ -40,14 +46,14 @@ if [ ! -d $ROOT/checker-framework-inference/lib ] ; then
 fi
 
 # Copy build result into CFI lib dir
-echo "Copying $ROOT/z3/build/com.microsoft.z3.jar into $ROOT/checker-framework-inference/lib"
-(cp $ROOT/z3/build/com.microsoft.z3.jar $ROOT/checker-framework-inference/lib)
+echo "Copying $ROOT/z3/bin/com.microsoft.z3.jar into $ROOT/checker-framework-inference/lib"
+(cp $ROOT/z3/bin/com.microsoft.z3.jar $ROOT/checker-framework-inference/lib)
 echo "Copy done."
 
-echo "Copying $ROOT/z3/build/libz3.dylib into $ROOT/checker-framework-inference/lib"
-(cp $ROOT/z3/build/libz3.dylib $ROOT/checker-framework-inference/lib)
+echo "Copying $ROOT/z3/bin/libz3.dylib into $ROOT/checker-framework-inference/lib"
+(cp $ROOT/z3/bin/libz3.dylib $ROOT/checker-framework-inference/lib)
 echo "Copy done."
 
-echo "Copying $ROOT/z3/build/libz3java.dylibl into $ROOT/checker-framework-inference/lib"
-(cp $ROOT/z3/build/libz3java.dylib $ROOT/checker-framework-inference/lib)
+echo "Copying $ROOT/z3/bin/libz3java.dylibl into $ROOT/checker-framework-inference/lib"
+(cp $ROOT/z3/bin/libz3java.dylib $ROOT/checker-framework-inference/lib)
 echo "Copy done."

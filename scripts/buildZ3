@@ -19,11 +19,14 @@ UBUNTU_Z3="https://github.com/Z3Prover/z3/releases/download/z3-4.5.0/z3-4.5.0-x6
 
 MAC_Z3="https://github.com/Z3Prover/z3/releases/download/z3-4.5.0/z3-4.5.0-x64-osx-10.11.6.zip"
 
+
 if [[ "$OSTYPE" == "darwin"* ]]; then
     Z3_ZIP=$MAC_Z3
+    DY_LIB_SUFFIX=dylib
 else
     # Assume it is ubuntu OS.
     Z3_ZIP=$UBUNTU_Z3
+    DY_LIB_SUFFIX=so
 fi
 
 
@@ -50,10 +53,10 @@ echo "Copying $ROOT/z3/bin/com.microsoft.z3.jar into $ROOT/checker-framework-inf
 (cp $ROOT/z3/bin/com.microsoft.z3.jar $ROOT/checker-framework-inference/lib)
 echo "Copy done."
 
-echo "Copying $ROOT/z3/bin/libz3.dylib into $ROOT/checker-framework-inference/lib"
-(cp $ROOT/z3/bin/libz3.dylib $ROOT/checker-framework-inference/lib)
+echo "Copying $ROOT/z3/bin/libz3.$DY_LIB_SUFFIX into $ROOT/checker-framework-inference/lib"
+(cp $ROOT/z3/bin/libz3.$DY_LIB_SUFFIX $ROOT/checker-framework-inference/lib)
 echo "Copy done."
 
-echo "Copying $ROOT/z3/bin/libz3java.dylibl into $ROOT/checker-framework-inference/lib"
-(cp $ROOT/z3/bin/libz3java.dylib $ROOT/checker-framework-inference/lib)
+echo "Copying $ROOT/z3/bin/libz3java.$DY_LIB_SUFFIX into $ROOT/checker-framework-inference/lib"
+(cp $ROOT/z3/bin/libz3java.$DY_LIB_SUFFIX $ROOT/checker-framework-inference/lib)
 echo "Copy done."

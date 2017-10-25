@@ -84,7 +84,7 @@ public class Lattice {
         this.top = top;
         this.bottom = bottom;
         this.numTypes = numTypes;
-        this.underlyingQualifierHierarchy =qualifierHierarchy;
+        this.underlyingQualifierHierarchy = qualifierHierarchy;
         this.runtimeAMs = runtimeAMs;
     }
 

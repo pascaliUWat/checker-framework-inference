@@ -1,6 +1,7 @@
 package checkers.inference.solver.constraintgraph;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -50,15 +51,19 @@ public class ConstraintGraph {
     }
 
     protected Set<Edge> getEdges() {
-        return this.edges;
+        return Collections.unmodifiableSet(edges);
     }
 
     protected Set<Vertex> getConstantVerticies() {
-        return this.constantVerticies;
+        return Collections.unmodifiableSet(constantVerticies);
     }
 
     public Map<Vertex, Set<Constraint>> getConstantPath() {
-        return this.constantPath;
+        Map<Vertex, Set<Constraint>> tempMap = new HashMap<>();
+        for (Map.Entry<Vertex, Set<Constraint>> entry : constantPath.entrySet()) {
+            tempMap.put(entry.getKey(), Collections.unmodifiableSet(entry.getValue()));
+        }
+        return Collections.unmodifiableMap(tempMap);
     }
 
     protected void addConstantPath(Vertex vertex, Set<Constraint> constraints) {
@@ -66,7 +71,11 @@ public class ConstraintGraph {
     }
 
     public List<Set<Constraint>> getIndependentPath() {
-        return this.independentPath;
+        List<Set<Constraint>> tempList = new ArrayList<>();
+        for (Set<Constraint> path : independentPath) {
+            tempList.add(Collections.unmodifiableSet(path));
+        }
+        return Collections.unmodifiableList(tempList);
     }
 
     protected void addIndependentPath(Set<Constraint> independentPath) {

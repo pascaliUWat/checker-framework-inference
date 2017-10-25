@@ -18,8 +18,8 @@ import checkers.inference.model.VariableSlot;
  * ConstraintGraph represents constraints in a graph form. Each constraint is an
  * edge, and each slot is a vertex. ConstraintGraph is used for separating
  * constraint into different components by running graph traversal algorithm on
- * it. The graph is undirected, but for subtype constraint we use special edge
- * SubtypeEdge for it in case the direction is needed.
+ * it. Normal edges in this graph are bi-directional edges, except SubtypeEdge
+ * is single-directed from subtype vertex to supertype vertex.
  * 
  * @author jianchu
  *

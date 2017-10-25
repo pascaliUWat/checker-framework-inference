@@ -29,7 +29,6 @@ import checkers.inference.solver.backend.BackEnd;
 import checkers.inference.solver.frontend.Lattice;
 import checkers.inference.solver.util.StatisticRecorder;
 import checkers.inference.solver.util.StatisticRecorder.StatisticKey;
-import checkers.inference.solver.util.VectorUtils;
 
 /**
  * MaxSatBackEnd calls MaxSatSerializer that converts constraint into a list of

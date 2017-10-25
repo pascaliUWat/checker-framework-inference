@@ -1,4 +1,4 @@
-package checkers.inference.solver.util;
+package checkers.inference.solver.backend.maxsatbackend;
 
 import org.sat4j.core.VecInt;
 

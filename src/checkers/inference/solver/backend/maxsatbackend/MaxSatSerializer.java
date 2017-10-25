@@ -27,7 +27,6 @@ import checkers.inference.model.VariableSlot;
 import checkers.inference.solver.frontend.Lattice;
 import checkers.inference.solver.frontend.VariableCombos;
 import checkers.inference.solver.util.ConstantSlotUtils;
-import checkers.inference.solver.util.VectorUtils;
 
 /**
  * MaxSatSerializer converts constraint into array of VecInt as clauses.

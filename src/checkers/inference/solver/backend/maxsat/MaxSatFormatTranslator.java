@@ -31,7 +31,6 @@ import checkers.inference.model.VariableSlot;
 import checkers.inference.solver.backend.FormatTranslator;
 import checkers.inference.solver.frontend.Lattice;
 import checkers.inference.solver.frontend.VariableCombos;
-import checkers.inference.solver.util.VectorUtils;
 
 /**
  * MaxSatFormatTranslator converts constraint into array of VecInt as clauses.

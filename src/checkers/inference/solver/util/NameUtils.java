@@ -1,12 +1,14 @@
 package checkers.inference.solver.util;
 
-import org.checkerframework.javacutil.AnnotationUtils;
-
 import javax.lang.model.element.AnnotationMirror;
+import javax.lang.model.element.TypeElement;
+import javax.lang.model.type.DeclaredType;
 
 public class NameUtils {
 
     public static String getSimpleName(AnnotationMirror annoMirror) {
-        return AnnotationUtils.annotationSimpleName(annoMirror).toString();
+        final DeclaredType annoType = annoMirror.getAnnotationType();
+        final TypeElement elm = (TypeElement) annoType.asElement();
+        return elm.getSimpleName().toString().intern();
     }
 }

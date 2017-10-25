@@ -37,7 +37,7 @@ import checkers.inference.solver.frontend.Lattice;
 import checkers.inference.solver.frontend.LatticeBuilder;
 import checkers.inference.solver.util.Constants;
 import checkers.inference.solver.util.Constants.SolverArg;
-import checkers.inference.solver.util.Constants.slotType;
+import checkers.inference.solver.util.Constants.SlotType;
 import checkers.inference.solver.util.PrintUtils;
 import checkers.inference.solver.util.StatisticRecorder;
 import checkers.inference.solver.util.StatisticRecorder.StatisticKey;
@@ -358,17 +358,17 @@ public class SolverEngine implements InferenceSolver {
 
         for (Slot slot : slots) {
             if (slot instanceof ConstantSlot) {
-                if (!modelMap.containsKey(slotType.ConstantSlot.name())) {
-                    modelMap.put(slotType.ConstantSlot.name(), 1);
+                if (!modelMap.containsKey(SlotType.ConstantSlot.name())) {
+                    modelMap.put(SlotType.ConstantSlot.name(), 1);
                 } else {
-                    modelMap.put(slotType.ConstantSlot.name(), modelMap.get(slotType.ConstantSlot.name()) + 1);
+                    modelMap.put(SlotType.ConstantSlot.name(), modelMap.get(SlotType.ConstantSlot.name()) + 1);
                 }
 
             } else if (slot instanceof VariableSlot) {
-                if (!modelMap.containsKey(slotType.VariableSlot.name())) {
-                    modelMap.put(slotType.VariableSlot.name(), 1);
+                if (!modelMap.containsKey(SlotType.VariableSlot.name())) {
+                    modelMap.put(SlotType.VariableSlot.name(), 1);
                 } else {
-                    modelMap.put(slotType.VariableSlot.name(), modelMap.get(slotType.VariableSlot.name()) + 1);
+                    modelMap.put(SlotType.VariableSlot.name(), modelMap.get(SlotType.VariableSlot.name()) + 1);
                 }
             }
         }

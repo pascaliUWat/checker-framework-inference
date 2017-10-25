@@ -12,7 +12,7 @@ public class Constants {
         solver, useGraph, solveInParallel, collectStatistic;
     }
 
-    public enum slotType {
+    public enum SlotType {
         ConstantSlot, VariableSlot;
     }
 

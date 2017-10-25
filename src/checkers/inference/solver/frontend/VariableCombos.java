@@ -7,8 +7,14 @@ import checkers.inference.model.Slot;
 import checkers.inference.model.VariableSlot;
 
 /**
- * VariableCombos is used in serializer and can represent different situation in
- * constraint. The real serialization logic is implemented within the methods in
+ * VariableCombos takes slots for a given constraint, and down cast them
+ * to corresponding VariableSlot and ConstantSlot, then passing them to
+ * corresponding methods in this class.
+ *
+ * It is used in Serializer, and defines a finer process of different
+ * compositions of slots for a given constraint.
+ *
+ * The real serialization logic is implemented within the methods in
  * this class.
  * 
  * @author jianchu

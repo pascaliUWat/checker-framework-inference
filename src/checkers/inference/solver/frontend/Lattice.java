@@ -9,7 +9,7 @@ import javax.lang.model.element.AnnotationMirror;
 
 /**
  * Lattice class contains necessary information about qualifier hierarchy for
- * constraint constraint solving.
+ * constraint solving.
  * 
  * It is convenient to get all subtypes and supertypes of a specific type
  * qualifier, all type qualifier, and bottom and top qualifiers from an instance

@@ -14,7 +14,7 @@ public interface Z3BitVectorCodec {
     int getFixedBitVectorSize();
 
     /**
-     * Encode a given AnnotationMirror to a numeral value represents the encoded bit vector.
+     * Encode a given AnnotationMirror to a numeric value whose binary representation is the encoded bit vector.
      * @param am a given AnnotationMirror.
      * @return numeral value of the encoded bit vector, -1 if the given {@code am} cannot be encoded.
      */

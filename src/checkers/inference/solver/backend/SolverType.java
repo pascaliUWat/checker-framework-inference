@@ -43,7 +43,7 @@ public enum SolverType {
             return (FormatTranslator<?, ?, ?>) cons.newInstance(lattice);
         } catch (Exception e) {
             ErrorReporter.errorAbort(
-                    "Exception happends when creating default serializer for " + simpleName + " backend.", e);
+                    "Exception happens when creating default serializer for " + simpleName + " backend.", e);
             // Dead code.
             return null;
         }

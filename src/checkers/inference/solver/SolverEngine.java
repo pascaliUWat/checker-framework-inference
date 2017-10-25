@@ -158,7 +158,7 @@ public class SolverEngine implements InferenceSolver {
     }
 
     /**
-     * This method create the default translator for a given backEndType.
+     * This method creates the default translator for a given backEndType.
      *
      * If customized serialization logic is needed, one can override this method and
      * return a customized translator corresponding to the given backEndType.
@@ -294,7 +294,7 @@ public class SolverEngine implements InferenceSolver {
     }
 
     /**
-     * This method is called if user wants to call all underlying solvers in sequential.
+     * This method is called if user wants to call all underlying solvers in sequence.
      * 
      * @param underlyingSolvers
      * @return A list of Map that contains solutions from all underlying solvers.

@@ -133,8 +133,8 @@ public class MaxSatFormatTranslator implements FormatTranslator<VecInt[], VecInt
                     -MathUtils.mapIdToMatrixEntry(subtype.getId(), typeToInt.get(lattice.top), lattice),
                     MathUtils.mapIdToMatrixEntry(supertype.getId(), typeToInt.get(lattice.top), lattice));
             VecInt subtypeOfBottom = VectorUtils.asVec(
-                    -MathUtils.mapIdToMatrixEntry(supertype.getId(), typeToInt.get(lattice.top), lattice),
-                    MathUtils.mapIdToMatrixEntry(subtype.getId(), typeToInt.get(lattice.top), lattice));
+                    -MathUtils.mapIdToMatrixEntry(supertype.getId(), typeToInt.get(lattice.bottom), lattice),
+                    MathUtils.mapIdToMatrixEntry(subtype.getId(), typeToInt.get(lattice.bottom), lattice));
 
             List<VecInt> resultList = new ArrayList<VecInt>();
             for (AnnotationMirror type : lattice.allTypes) {

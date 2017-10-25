@@ -24,7 +24,6 @@ import checkers.inference.model.Constraint;
 import checkers.inference.model.PreferenceConstraint;
 import checkers.inference.model.Slot;
 import checkers.inference.solver.backend.SolverAdapter;
-import checkers.inference.solver.backend.FormatTranslator;
 import checkers.inference.solver.frontend.Lattice;
 import checkers.inference.solver.util.StatisticRecorder;
 import checkers.inference.solver.util.StatisticRecorder.StatisticKey;
@@ -74,19 +73,8 @@ public class MaxSatSolver extends SolverAdapter<MaxSatFormatTranslator> {
         this.convertAll();
         this.serializationEnd = System.currentTimeMillis();
 
-        //TODO: Would it be better to have a type restriction on Translator class
-        // that a backend requires? E.g. for MaxSatBackend, the translator passed
-        // in has to be a sub-class of MaxSatTranslator.
-        //
-        // The pros would be we can have more flexible way of interactions between
-        // translators and backends without losing type safety.
-        //
-        // THe cons would be we will add one more type parameter on BackEnd class,
-        // which makes BackEnd really complicate (we will have 4 type parameters on
-        // a single class!).
-        MaxSatFormatTranslator maxSatTranslator = (MaxSatFormatTranslator) formatTranslator;
         for (Integer varSlotId : this.varSlotIds) {
-            maxSatTranslator.generateOneHotClauses(hardClauses, varSlotId);
+            formatTranslator.generateOneHotClauses(hardClauses, varSlotId);
         }
 
         if (shouldOutputCNF()) {

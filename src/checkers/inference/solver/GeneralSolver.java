@@ -123,28 +123,12 @@ public class GeneralSolver implements InferenceSolver {
             ErrorReporter.errorAbort("Back end \"" + backEndName + "\" has not been implemented yet.");
         }
 
-        if (useGraph == null || useGraph.equals(Constants.TRUE)) {
-            // Configure use of constraint graph. Default is true.
-            this.useGraph = true;
-        } else {
-            this.useGraph = false;
-        }
+        this.useGraph = useGraph == null || useGraph.equals(Constants.TRUE);
 
-        if (backEndType.equals(BackEndType.LOGIQL)) {
-            // Configure solving strategy.
-            this.solveInParallel = false;
-        } else if (solveInParallel == null || solveInParallel.equals(Constants.TRUE)) {
-            this.solveInParallel = true;
-        } else {
-            this.solveInParallel = false;
-        }
+        this.solveInParallel = !backEndType.equals(BackEndType.LOGIQL)
+                && (solveInParallel == null || solveInParallel.equals(Constants.TRUE));
 
-        if (collectStatistic == null || collectStatistic.equals(Constants.FALSE)) {
-            // Configure statistic collection.
-            this.collectStatistic = false;
-        } else if (collectStatistic.equals(Constants.TRUE)) {
-            this.collectStatistic = true;
-        }
+        this.collectStatistic = collectStatistic != null && !collectStatistic.equals(Constants.FALSE);
 
         // Sanitize the configuration if it needs.
         sanitizeConfiguration();

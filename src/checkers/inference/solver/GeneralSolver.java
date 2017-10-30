@@ -75,7 +75,7 @@ public class GeneralSolver implements InferenceSolver {
 
         configureSolverArgs(configuration);
         configureLattice(qualHierarchy);
-        Serializer<?, ?> defaultSerializer = createSerializer(backEndType, lattice);
+        Serializer<?, ?> serializer = createSerializer(backEndType, lattice);
 
         if (useGraph) {
             final long graphBuildingStart = System.currentTimeMillis();
@@ -83,10 +83,10 @@ public class GeneralSolver implements InferenceSolver {
             final long graphBuildingEnd = System.currentTimeMillis();
             StatisticRecorder.record(StatisticKey.GRAPH_GENERATION_TIME, (graphBuildingEnd - graphBuildingStart));
             solution = graphSolve(constraintGraph, configuration, slots, constraints, qualHierarchy,
-                    processingEnvironment, defaultSerializer);
+                    processingEnvironment, serializer);
         } else {
             realBackEnd = createBackEnd(backEndType, configuration, slots, constraints, qualHierarchy,
-                    processingEnvironment, lattice, defaultSerializer);
+                    processingEnvironment, lattice, serializer);
             solution = solve();
         }
 
@@ -170,9 +170,9 @@ public class GeneralSolver implements InferenceSolver {
     protected BackEnd<?, ?> createBackEnd(BackEndType backEndType, Map<String, String> configuration,
             Collection<Slot> slots, Collection<Constraint> constraints,
             QualifierHierarchy qualHierarchy, ProcessingEnvironment processingEnvironment,
-            Lattice lattice, Serializer<?, ?> defaultSerializer) {
+            Lattice lattice, Serializer<?, ?> serializer) {
             return backEndType.createBackEnd(configuration, slots,
-                    constraints, qualHierarchy, processingEnvironment, lattice, defaultSerializer);
+                    constraints, qualHierarchy, processingEnvironment, lattice, serializer);
     }
 
     /**
@@ -201,20 +201,20 @@ public class GeneralSolver implements InferenceSolver {
      * @param constraints
      * @param qualHierarchy
      * @param processingEnvironment
-     * @param defaultSerializer
+     * @param serializer
      * @return an InferenceSolution for the given slots/constraints
      */
     protected InferenceSolution graphSolve(ConstraintGraph constraintGraph,
             Map<String, String> configuration, Collection<Slot> slots,
             Collection<Constraint> constraints, QualifierHierarchy qualHierarchy,
-            ProcessingEnvironment processingEnvironment, Serializer<?, ?> defaultSerializer) {
+            ProcessingEnvironment processingEnvironment, Serializer<?, ?> serializer) {
 
         List<BackEnd<?, ?>> backEnds = new ArrayList<BackEnd<?, ?>>();
         StatisticRecorder.record(StatisticKey.GRAPH_SIZE, (long) constraintGraph.getIndependentPath().size());
 
         for (Set<Constraint> independentConstraints : constraintGraph.getIndependentPath()) {
             backEnds.add(createBackEnd(backEndType, configuration, slots, independentConstraints,
-                    qualHierarchy, processingEnvironment, lattice, defaultSerializer));
+                    qualHierarchy, processingEnvironment, lattice, serializer));
         }
         // Clear constraint graph in order to save memory.
         this.constraintGraph = null;

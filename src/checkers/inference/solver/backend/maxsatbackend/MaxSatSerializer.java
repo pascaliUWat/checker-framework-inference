@@ -9,6 +9,7 @@ import java.util.Set;
 
 import javax.lang.model.element.AnnotationMirror;
 
+import org.checkerframework.javacutil.AnnotationUtils;
 import org.sat4j.core.VecInt;
 
 import checkers.inference.model.CombVariableSlot;
@@ -26,7 +27,6 @@ import checkers.inference.model.SubtypeConstraint;
 import checkers.inference.model.VariableSlot;
 import checkers.inference.solver.frontend.Lattice;
 import checkers.inference.solver.frontend.VariableCombos;
-import checkers.inference.solver.util.ConstantSlotUtils;
 
 /**
  * MaxSatSerializer converts constraint into array of VecInt as clauses.
@@ -59,7 +59,7 @@ public class MaxSatSerializer implements Serializer<VecInt[], VecInt[]> {
         @Override
         protected VecInt[] constant_variable(ConstantSlot subtype, VariableSlot supertype,
                 SubtypeConstraint constraint) {
-            if (ConstantSlotUtils.areSameType(subtype.getValue(), lattice.top)) {
+            if (AnnotationUtils.areSame(subtype.getValue(), lattice.top)) {
                 return VectorUtils.asVecArray(
                         MathUtils.mapIdToMatrixEntry(supertype.getId(), lattice.top, lattice));
             }
@@ -77,7 +77,7 @@ public class MaxSatSerializer implements Serializer<VecInt[], VecInt[]> {
         protected VecInt[] variable_constant(VariableSlot subtype, ConstantSlot supertype,
                 SubtypeConstraint constraint) {
 
-            if (ConstantSlotUtils.areSameType(supertype.getValue(), lattice.bottom)) {
+            if (AnnotationUtils.areSame(supertype.getValue(), lattice.bottom)) {
                 return VectorUtils.asVecArray(
                         MathUtils.mapIdToMatrixEntry(subtype.getId(), lattice.bottom, lattice));
             }
@@ -107,13 +107,13 @@ public class MaxSatSerializer implements Serializer<VecInt[], VecInt[]> {
             List<VecInt> resultList = new ArrayList<VecInt>();
             for (AnnotationMirror type : lattice.allTypes) {
                 // if we know subtype
-                if (!ConstantSlotUtils.areSameType(type, lattice.top)) {
+                if (!AnnotationUtils.areSame(type, lattice.top)) {
                     resultList.add(VectorUtils
                             .asVec(getMaybe(type, subtype, supertype, lattice.superType.get(type))));
                 }
 
                 // if we know supertype
-                if (!ConstantSlotUtils.areSameType(type, lattice.bottom)) {
+                if (!AnnotationUtils.areSame(type, lattice.bottom)) {
                     resultList.add(VectorUtils
                             .asVec(getMaybe(type, supertype, subtype, lattice.subType.get(type))));
                 }
@@ -151,7 +151,7 @@ public class MaxSatSerializer implements Serializer<VecInt[], VecInt[]> {
         List<Integer> resultList = new ArrayList<Integer>();
 
         for (AnnotationMirror sub : mustNotBe) {
-            if (!ConstantSlotUtils.areSameType(sub, cSlot.getValue())) {
+            if (!AnnotationUtils.areSame(sub, cSlot.getValue())) {
                 resultList.add(-MathUtils.mapIdToMatrixEntry(vSlot.getId(), sub, lattice));
             }
         }

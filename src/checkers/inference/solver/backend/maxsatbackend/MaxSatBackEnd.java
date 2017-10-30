@@ -19,8 +19,6 @@ import org.checkerframework.framework.type.QualifierHierarchy;
 import org.sat4j.core.VecInt;
 import org.sat4j.maxsat.WeightedMaxSatDecorator;
 
-import checkers.inference.InferenceMain;
-import checkers.inference.SlotManager;
 import checkers.inference.model.Constraint;
 import checkers.inference.model.PreferenceConstraint;
 import checkers.inference.model.Serializer;
@@ -39,7 +37,6 @@ import checkers.inference.solver.util.StatisticRecorder.StatisticKey;
  */
 public class MaxSatBackEnd extends BackEnd<VecInt[], VecInt[]> {
 
-    protected final SlotManager slotManager;
     protected final List<VecInt> hardClauses = new LinkedList<VecInt>();
     protected final List<VecInt> softClauses = new LinkedList<VecInt>();
     protected final File CNFData = new File(new File("").getAbsolutePath() + "/cnfData");
@@ -56,7 +53,6 @@ public class MaxSatBackEnd extends BackEnd<VecInt[], VecInt[]> {
             Lattice lattice) {
         super(configuration, slots, constraints, qualHierarchy, processingEnvironment, realSerializer,
                 lattice);
-        this.slotManager = InferenceMain.getInstance().getSlotManager();
 
         if (shouldOutputCNF()) {
             CNFData.mkdir();
@@ -125,7 +121,7 @@ public class MaxSatBackEnd extends BackEnd<VecInt[], VecInt[]> {
      */
     private void configureSatSolver(WeightedMaxSatDecorator solver) {
 
-        final int totalVars = (slotManager.getNumberOfSlots() * lattice.numTypes);
+        final int totalVars = (slots.size() * lattice.numTypes);
         final int totalClauses = hardClauses.size() + softClauses.size();
 
         solver.newVar(totalVars);
@@ -215,7 +211,7 @@ public class MaxSatBackEnd extends BackEnd<VecInt[], VecInt[]> {
     protected void buildCNF() {
 
         final int totalClauses = hardClauses.size();
-        final int totalVars = slotManager.getNumberOfSlots() * lattice.numTypes;
+        final int totalVars = slots.size() * lattice.numTypes;
 
         CNFInput.append("c This is the CNF input\n");
         CNFInput.append("p cnf ");

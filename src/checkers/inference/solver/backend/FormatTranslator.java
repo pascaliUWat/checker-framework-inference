@@ -13,11 +13,11 @@ import checkers.inference.model.Serializer;
  *
  * @author charleszhuochen
  *
- * @param <S> encoding type for slot.
- * @param <T> encoding type for constraint.
- * @param <A> type for underlying solver's solution of a Slot
+ * @param <SlotEncodingT> encoding type for slot.
+ * @param <ConstraintEncodingT> encoding type for constraint.
+ * @param <SlotSolutionT> type for underlying solver's solution of a Slot
  */
-public interface FormatTranslator<S, T, A> extends Serializer<S, T> {
+public interface FormatTranslator<SlotEncodingT, ConstraintEncodingT, SlotSolutionT> extends Serializer<SlotEncodingT, ConstraintEncodingT> {
 
     /**
      * Decode solver's solution of a Slot to an AnnotationMirror represent this solution.
@@ -26,5 +26,5 @@ public interface FormatTranslator<S, T, A> extends Serializer<S, T> {
      * @param processingEnvironment the process environment for creating the AnnotationMirror, if needed
      * @return AnnotationMirror represent this solution
      */
-    AnnotationMirror decodeSolution(A solution, ProcessingEnvironment processingEnvironment);
+    AnnotationMirror decodeSolution(SlotSolutionT solution, ProcessingEnvironment processingEnvironment);
 }

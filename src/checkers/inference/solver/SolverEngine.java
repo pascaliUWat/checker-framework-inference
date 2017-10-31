@@ -84,7 +84,7 @@ public class SolverEngine implements InferenceSolver {
             solution = graphSolve(constraintGraph, configuration, slots, constraints, qualHierarchy,
                     processingEnvironment, formatTranslator);
         } else {
-            underlyingSolver = createSolverAdapter(solverType, configuration, slots, constraints, qualHierarchy,
+            underlyingSolver = createSolverAdapter(solverType, configuration, slots, constraints,
                     processingEnvironment, lattice, formatTranslator);
             solution = solve();
         }
@@ -178,11 +178,10 @@ public class SolverEngine implements InferenceSolver {
     }
 
     protected SolverAdapter<?> createSolverAdapter(SolverType solverType, Map<String, String> configuration,
-            Collection<Slot> slots, Collection<Constraint> constraints,
-            QualifierHierarchy qualHierarchy, ProcessingEnvironment processingEnvironment,
+            Collection<Slot> slots, Collection<Constraint> constraints, ProcessingEnvironment processingEnvironment,
             Lattice lattice, FormatTranslator<?, ?, ?> formatTranslator) {
             return solverType.createSolverAdapter(configuration, slots,
-                    constraints, qualHierarchy, processingEnvironment, lattice, formatTranslator);
+                    constraints, processingEnvironment, lattice, formatTranslator);
     }
 
     /**
@@ -224,7 +223,7 @@ public class SolverEngine implements InferenceSolver {
 
         for (Set<Constraint> independentConstraints : constraintGraph.getIndependentPath()) {
             underlyingSolvers.add(createSolverAdapter(solverType, configuration, slots, independentConstraints,
-                    qualHierarchy, processingEnvironment, lattice, formatTranslator));
+                    processingEnvironment, lattice, formatTranslator));
         }
         // Clear constraint graph in order to save memory.
         this.constraintGraph = null;

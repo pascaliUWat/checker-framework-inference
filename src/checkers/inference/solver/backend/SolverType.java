@@ -6,7 +6,6 @@ import java.util.Map;
 
 import javax.annotation.processing.ProcessingEnvironment;
 
-import org.checkerframework.framework.type.QualifierHierarchy;
 import org.checkerframework.javacutil.ErrorReporter;
 
 import checkers.inference.model.Constraint;
@@ -50,14 +49,13 @@ public enum SolverType {
 
     public SolverAdapter<?> createSolverAdapter(Map<String, String> configuration,
             Collection<Slot> slots, Collection<Constraint> constraints,
-            QualifierHierarchy qualHierarchy, ProcessingEnvironment processingEnvironment,
-            Lattice lattice, FormatTranslator<?, ?, ?> formatTranslator) {
+            ProcessingEnvironment processingEnvironment, Lattice lattice,
+            FormatTranslator<?, ?, ?> formatTranslator) {
         try {
             Constructor<?> cons = solverAdapterClass.getConstructor(Map.class, Collection.class,
-                    Collection.class, QualifierHierarchy.class, ProcessingEnvironment.class,
-                    translatorClass, Lattice.class);
+                    Collection.class, ProcessingEnvironment.class, translatorClass, Lattice.class);
 
-            return (SolverAdapter<?>) cons.newInstance(configuration, slots, constraints, qualHierarchy,
+            return (SolverAdapter<?>) cons.newInstance(configuration, slots, constraints,
                     processingEnvironment, formatTranslator, lattice);
         } catch (Exception e) {
             ErrorReporter.errorAbort(

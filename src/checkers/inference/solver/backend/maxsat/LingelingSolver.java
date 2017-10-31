@@ -15,12 +15,10 @@ import java.util.concurrent.atomic.AtomicInteger;
 import javax.annotation.processing.ProcessingEnvironment;
 import javax.lang.model.element.AnnotationMirror;
 
-import org.checkerframework.framework.type.QualifierHierarchy;
 import org.sat4j.core.VecInt;
 
 import checkers.inference.model.Constraint;
 import checkers.inference.model.Slot;
-import checkers.inference.solver.backend.FormatTranslator;
 import checkers.inference.solver.frontend.Lattice;
 import checkers.inference.solver.util.StatisticRecorder;
 import checkers.inference.solver.util.StatisticRecorder.StatisticKey;
@@ -45,10 +43,9 @@ public class LingelingSolver extends MaxSatSolver {
     private long serializationEnd;
 
     public LingelingSolver(Map<String, String> configuration, Collection<Slot> slots,
-            Collection<Constraint> constraints, QualifierHierarchy qualHierarchy,
-            ProcessingEnvironment processingEnvironment, MaxSatFormatTranslator formatTranslator,
-            Lattice lattice) {
-        super(configuration, slots, constraints, qualHierarchy, processingEnvironment, formatTranslator,
+            Collection<Constraint> constraints, ProcessingEnvironment processingEnvironment,
+            MaxSatFormatTranslator formatTranslator, Lattice lattice) {
+        super(configuration, slots, constraints, processingEnvironment, formatTranslator,
                 lattice);
     }
 

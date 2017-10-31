@@ -8,8 +8,6 @@ import java.util.Set;
 import javax.annotation.processing.ProcessingEnvironment;
 import javax.lang.model.element.AnnotationMirror;
 
-import org.checkerframework.framework.type.QualifierHierarchy;
-
 import checkers.inference.model.ConstantSlot;
 import checkers.inference.model.Constraint;
 import checkers.inference.model.Slot;
@@ -55,11 +53,6 @@ public abstract class SolverAdapter<T extends FormatTranslator<?, ?, ?>> {
      */
     protected final Collection<Constraint> constraints;
 
-    /**
-     * Target QualifierHierarchy
-     */
-    protected final QualifierHierarchy qualHierarchy;
-
     protected final ProcessingEnvironment processingEnvironment;
 
     /**
@@ -79,12 +72,10 @@ public abstract class SolverAdapter<T extends FormatTranslator<?, ?, ?>> {
     protected final Lattice lattice;
 
     public SolverAdapter(Map<String, String> configuration, Collection<Slot> slots,
-            Collection<Constraint> constraints, QualifierHierarchy qualHierarchy,
-            ProcessingEnvironment processingEnvironment, T formatTranslator, Lattice lattice) {
+            Collection<Constraint> constraints, ProcessingEnvironment processingEnvironment, T formatTranslator, Lattice lattice) {
         this.configuration = configuration;
         this.slots = slots;
         this.constraints = constraints;
-        this.qualHierarchy = qualHierarchy;
         this.processingEnvironment = processingEnvironment;
         this.formatTranslator = formatTranslator;
         this.varSlotIds = new HashSet<Integer>();

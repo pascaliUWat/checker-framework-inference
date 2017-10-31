@@ -14,7 +14,6 @@ import java.util.Set;
 import javax.annotation.processing.ProcessingEnvironment;
 import javax.lang.model.element.AnnotationMirror;
 
-import org.checkerframework.framework.type.QualifierHierarchy;
 import org.sat4j.core.VecInt;
 import org.sat4j.maxsat.WeightedMaxSatDecorator;
 
@@ -49,10 +48,9 @@ public class MaxSatSolver extends SolverAdapter<MaxSatFormatTranslator> {
     protected long solvingEnd;
 
     public MaxSatSolver(Map<String, String> configuration, Collection<Slot> slots,
-            Collection<Constraint> constraints, QualifierHierarchy qualHierarchy,
-            ProcessingEnvironment processingEnvironment, MaxSatFormatTranslator formatTranslator,
-            Lattice lattice) {
-        super(configuration, slots, constraints, qualHierarchy, processingEnvironment, formatTranslator,
+            Collection<Constraint> constraints, ProcessingEnvironment processingEnvironment,
+            MaxSatFormatTranslator formatTranslator, Lattice lattice) {
+        super(configuration, slots, constraints, processingEnvironment, formatTranslator,
                 lattice);
         this.slotManager = InferenceMain.getInstance().getSlotManager();
 

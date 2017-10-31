@@ -10,12 +10,10 @@ import java.util.concurrent.atomic.AtomicInteger;
 import javax.annotation.processing.ProcessingEnvironment;
 import javax.lang.model.element.AnnotationMirror;
 
-import org.checkerframework.framework.type.QualifierHierarchy;
 
 import checkers.inference.model.Constraint;
 import checkers.inference.model.Slot;
 import checkers.inference.solver.backend.SolverAdapter;
-import checkers.inference.solver.backend.FormatTranslator;
 import checkers.inference.solver.frontend.Lattice;
 import checkers.inference.solver.util.NameUtils;
 import checkers.inference.solver.util.StatisticRecorder;
@@ -40,10 +38,9 @@ public class LogiQLSolver extends SolverAdapter<LogiQLFormatTranslator> {
     private long solvingStart;
     private long solvingEnd;
     public LogiQLSolver(Map<String, String> configuration, Collection<Slot> slots,
-            Collection<Constraint> constraints, QualifierHierarchy qualHierarchy,
-            ProcessingEnvironment processingEnvironment, LogiQLFormatTranslator formatTranslator,
-            Lattice lattice) {
-        super(configuration, slots, constraints, qualHierarchy, processingEnvironment, formatTranslator,
+            Collection<Constraint> constraints, ProcessingEnvironment processingEnvironment,
+            LogiQLFormatTranslator formatTranslator, Lattice lattice) {
+        super(configuration, slots, constraints, processingEnvironment, formatTranslator,
                 lattice);
         logiqldata.mkdir();
     }

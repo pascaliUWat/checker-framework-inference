@@ -10,7 +10,6 @@ import org.checkerframework.framework.type.QualifierHierarchy;
 import org.checkerframework.javacutil.ErrorReporter;
 
 import checkers.inference.model.Constraint;
-import checkers.inference.model.Serializer;
 import checkers.inference.model.Slot;
 import checkers.inference.solver.backend.logiql.LogiQLFormatTranslator;
 import checkers.inference.solver.backend.logiql.LogiQLSolver;

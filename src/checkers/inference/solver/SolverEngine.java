@@ -75,7 +75,7 @@ public class SolverEngine implements InferenceSolver {
 
         configureSolverArgs(configuration);
         configureLattice(qualHierarchy, slots);
-        FormatTranslator<?, ?, ?> defaultFormatTranslator = createFormatTranslator(solverType, lattice);
+        FormatTranslator<?, ?, ?> formatTranslator = createFormatTranslator(solverType, lattice);
 
         if (useGraph) {
             final long graphBuildingStart = System.currentTimeMillis();
@@ -83,10 +83,10 @@ public class SolverEngine implements InferenceSolver {
             final long graphBuildingEnd = System.currentTimeMillis();
             StatisticRecorder.record(StatisticKey.GRAPH_GENERATION_TIME, (graphBuildingEnd - graphBuildingStart));
             solution = graphSolve(constraintGraph, configuration, slots, constraints, qualHierarchy,
-                    processingEnvironment, defaultFormatTranslator);
+                    processingEnvironment, formatTranslator);
         } else {
             underlyingSolver = createSolverAdapter(solverType, configuration, slots, constraints, qualHierarchy,
-                    processingEnvironment, lattice, defaultFormatTranslator);
+                    processingEnvironment, lattice, formatTranslator);
             solution = solve();
         }
 

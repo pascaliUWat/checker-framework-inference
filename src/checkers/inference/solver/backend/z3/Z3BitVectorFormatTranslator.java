@@ -1,8 +1,11 @@
-package checkers.inference.solver.backend.z3backend;
+package checkers.inference.solver.backend.z3;
 
 import java.math.BigInteger;
 import java.util.HashMap;
 import java.util.Map;
+
+import javax.annotation.processing.ProcessingEnvironment;
+import javax.lang.model.element.AnnotationMirror;
 
 import com.microsoft.z3.BitVecExpr;
 import com.microsoft.z3.BitVecNum;
@@ -20,14 +23,14 @@ import checkers.inference.model.ExistentialVariableSlot;
 import checkers.inference.model.InequalityConstraint;
 import checkers.inference.model.PreferenceConstraint;
 import checkers.inference.model.RefinementVariableSlot;
-import checkers.inference.model.Serializer;
 import checkers.inference.model.Slot;
 import checkers.inference.model.SubtypeConstraint;
 import checkers.inference.model.VariableSlot;
+import checkers.inference.solver.backend.FormatTranslator;
 import checkers.inference.solver.frontend.Lattice;
 import checkers.inference.solver.frontend.VariableCombos;
 
-public abstract class Z3BitVectorSerializer implements Serializer<BitVecExpr, BoolExpr>{
+public abstract class Z3BitVectorFormatTranslator implements FormatTranslator<BitVecExpr, BoolExpr, BitVecNum>{
 
     private Optimize solver;
 
@@ -45,7 +48,7 @@ public abstract class Z3BitVectorSerializer implements Serializer<BitVecExpr, Bo
 
     protected Z3EqualityVariableCombos equalityVariableCombos;
 
-    public Z3BitVectorSerializer(Lattice lattice) {
+    public Z3BitVectorFormatTranslator(Lattice lattice) {
         this.lattice = lattice;
         this.z3BitVectorCodec = createZ3BitVectorCodec();
         serializedSlots = new HashMap<>();
@@ -308,5 +311,10 @@ public abstract class Z3BitVectorSerializer implements Serializer<BitVecExpr, Bo
         public BoolExpr accept(Slot slot1, Slot slot2, EqualityConstraint constraint) {
             return super.accept(slot1, slot2, constraint);
         }
+    }
+
+    @Override
+    public AnnotationMirror decodeSolution(BitVecNum solution, ProcessingEnvironment processingEnvironment) {
+        return z3BitVectorCodec.decodeNumeralValue(solution.getBigInteger(), processingEnvironment);
     }
 }

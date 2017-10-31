@@ -1,4 +1,4 @@
-package checkers.inference.solver.backend.z3backend;
+package checkers.inference.solver.backend.z3;
 
 import java.math.BigInteger;
 

@@ -6,6 +6,7 @@ import java.util.Set;
 
 import javax.lang.model.element.AnnotationMirror;
 
+import org.checkerframework.javacutil.AnnotationUtils;
 import org.checkerframework.javacutil.ErrorReporter;
 
 /**
@@ -26,16 +27,16 @@ public class TwoQualifiersLattice extends Lattice {
 
     @Override
     public boolean isSubtype(AnnotationMirror a1, AnnotationMirror a2) {
-        if (!allTypes.contains(a1) || !allTypes.contains(a2)) {
+        if (!AnnotationUtils.containsSame(allTypes, a1) || !AnnotationUtils.containsSame(allTypes, a2)) {
             ErrorReporter.errorAbort("Enconture invalid type when perform isSubtype judgement: " +
                     " all type qualifiers in this lattice are: " + allTypes +
                     " but a1 is : + " + a1 + " and a2 is: " + a2);
         }
 
-        if (bottom.equals(a1)) {
+        if (AnnotationUtils.areSame(bottom, a1)) {
             return true;
         } else {
-            return top.equals(a2);
+            return AnnotationUtils.areSame(top, a2);
         }
     }
 }

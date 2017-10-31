@@ -58,11 +58,12 @@ public class Lattice {
     public final int numTypes;
 
     /**
-     * Runtime Annotation Mirrors extracted from slots.
+     * All concrete qualifiers information that collected from the program
+     * CF Inference running on.
      * This field is useful for type systems that has a dynamic number
      * of type qualifiers.
      */
-    public final Collection<AnnotationMirror> runtimeAMs;
+    public final Collection<AnnotationMirror> allAnnotations;
 
     /**
      * Underlying qualifier hierarchy that this lattice built based on.
@@ -85,7 +86,7 @@ public class Lattice {
         this.bottom = bottom;
         this.numTypes = numTypes;
         this.underlyingQualifierHierarchy = qualifierHierarchy;
-        this.runtimeAMs = runtimeAMs;
+        this.allAnnotations = runtimeAMs;
     }
 
     public boolean isSubtype(AnnotationMirror a1, AnnotationMirror a2) {

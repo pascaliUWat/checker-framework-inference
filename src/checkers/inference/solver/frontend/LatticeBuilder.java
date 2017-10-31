@@ -107,7 +107,7 @@ public class LatticeBuilder {
             }
         }
 
-        calculateRuntimeAnnotationMirrors(slots);
+        collectConstantAnnotationMirrors(slots);
 
         return new Lattice(subType, superType, incomparableType, allTypes, top,
                 bottom, numTypes, runtimeAMs, qualHierarchy);
@@ -155,6 +155,7 @@ public class LatticeBuilder {
      * the old values are gone.
      */
     private void clear() {
+        runtimeAMs.clear();
         this.subType.clear();
         this.superType.clear();
         this.incomparableType.clear();
@@ -168,8 +169,7 @@ public class LatticeBuilder {
      * Extract annotation mirrors in constant slots of a given collection of slots.
      * @param slots a collection of slots.
      */
-    private void calculateRuntimeAnnotationMirrors(Collection<Slot> slots) {
-        runtimeAMs.clear();
+    private void collectConstantAnnotationMirrors(Collection<Slot> slots) {
            for(Slot slot : slots) {
                if (slot instanceof ConstantSlot) {
                    runtimeAMs.add(((ConstantSlot) slot).getValue());

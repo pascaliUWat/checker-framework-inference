@@ -50,7 +50,7 @@ public abstract class Z3BitVectorFormatTranslator implements FormatTranslator<Bi
 
     public Z3BitVectorFormatTranslator(Lattice lattice) {
         this.lattice = lattice;
-        this.z3BitVectorCodec = createZ3BitVectorCodec();
+        z3BitVectorCodec = createZ3BitVectorCodec();
         serializedSlots = new HashMap<>();
         subtypeVariableCombos = new Z3SubtypeVariableCombos(EMPTY_VALUE);
         equalityVariableCombos = new Z3EqualityVariableCombos(EMPTY_VALUE);

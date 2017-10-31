@@ -52,17 +52,18 @@ public class LatticeBuilder {
     private int numTypes;
 
     /**
-     * Runtime Annotation Mirrors extracted from slots.
+     * All concrete qualifiers extracted from slots collected from the program
+     * that CF Inference running on.
      * This field is useful for type systems that has a dynamic number
      * of type qualifiers.
      */
-    public final Collection<AnnotationMirror> runtimeAMs;
+    public final Collection<AnnotationMirror> allAnnotations;
 
     public LatticeBuilder() {
         subType = AnnotationUtils .createAnnotationMap();
         superType = AnnotationUtils.createAnnotationMap();
         incomparableType = AnnotationUtils.createAnnotationMap();
-        runtimeAMs = AnnotationUtils.createAnnotationSet();
+        allAnnotations = AnnotationUtils.createAnnotationSet();
     }
 
     /**
@@ -110,7 +111,7 @@ public class LatticeBuilder {
         collectConstantAnnotationMirrors(slots);
 
         return new Lattice(subType, superType, incomparableType, allTypes, top,
-                bottom, numTypes, runtimeAMs, qualHierarchy);
+                bottom, numTypes, allAnnotations, qualHierarchy);
     }
 
     /**
@@ -155,7 +156,7 @@ public class LatticeBuilder {
      * the old values are gone.
      */
     private void clear() {
-        runtimeAMs.clear();
+        allAnnotations.clear();
         this.subType.clear();
         this.superType.clear();
         this.incomparableType.clear();
@@ -172,7 +173,7 @@ public class LatticeBuilder {
     private void collectConstantAnnotationMirrors(Collection<Slot> slots) {
            for(Slot slot : slots) {
                if (slot instanceof ConstantSlot) {
-                   runtimeAMs.add(((ConstantSlot) slot).getValue());
+                   allAnnotations.add(((ConstantSlot) slot).getValue());
                }
            }
        }

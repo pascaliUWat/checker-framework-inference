@@ -57,9 +57,8 @@ public class LingelingSolver extends MaxSatSolver {
         this.convertAll();
         this.serializationEnd = System.currentTimeMillis();
 
-        MaxSatFormatTranslator maxSatTranslator = (MaxSatFormatTranslator) formatTranslator;
         for (Integer varSlotId : this.varSlotIds) {
-            maxSatTranslator.generateOneHotClauses(hardClauses, varSlotId);
+            formatTranslator.generateOneHotClauses(hardClauses, varSlotId);
         }
 
         buildCNF();

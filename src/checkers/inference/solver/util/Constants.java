@@ -9,10 +9,10 @@ package checkers.inference.solver.util;
 public class Constants {
 
     public enum SolverArg {
-        backEndType, useGraph, solveInParallel, collectStatistic;
+        solver, useGraph, solveInParallel, collectStatistic;
     }
 
-    public enum slotType {
+    public enum SlotType {
         ConstantSlot, VariableSlot;
     }
 

@@ -47,16 +47,13 @@ public class Edge {
 
     @Override
     public boolean equals(Object o) {
-        if (o instanceof Edge) {
-            Edge edge = (Edge) o;
-            if (this.from.equals(edge.from) && this.to.equals(edge.to)) {
-                return true;
-            } else {
-                return false;
-            }
-        } else {
+        if (!(o instanceof Edge)) {
             return false;
         }
+
+        Edge edge = (Edge) o;
+
+        return this.from.equals(edge.from) && this.to.equals(edge.to);
     }
 
     @Override

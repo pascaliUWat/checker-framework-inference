@@ -1,6 +1,7 @@
 package checkers.inference.solver.constraintgraph;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -17,8 +18,8 @@ import checkers.inference.model.VariableSlot;
  * ConstraintGraph represents constraints in a graph form. Each constraint is an
  * edge, and each slot is a vertex. ConstraintGraph is used for separating
  * constraint into different components by running graph traversal algorithm on
- * it. The graph is undirected, but for subtype constraint we use special edge
- * SubtypeEdge for it in case the direction is needed.
+ * it. Normal edges in this graph are bi-directional edges, except SubtypeEdge
+ * is single-directed from subtype vertex to supertype vertex.
  * 
  * @author jianchu
  *
@@ -50,15 +51,19 @@ public class ConstraintGraph {
     }
 
     protected Set<Edge> getEdges() {
-        return this.edges;
+        return Collections.unmodifiableSet(edges);
     }
 
     protected Set<Vertex> getConstantVerticies() {
-        return this.constantVerticies;
+        return Collections.unmodifiableSet(constantVerticies);
     }
 
     public Map<Vertex, Set<Constraint>> getConstantPath() {
-        return this.constantPath;
+        Map<Vertex, Set<Constraint>> tempMap = new HashMap<>();
+        for (Map.Entry<Vertex, Set<Constraint>> entry : constantPath.entrySet()) {
+            tempMap.put(entry.getKey(), Collections.unmodifiableSet(entry.getValue()));
+        }
+        return Collections.unmodifiableMap(tempMap);
     }
 
     protected void addConstantPath(Vertex vertex, Set<Constraint> constraints) {
@@ -66,7 +71,11 @@ public class ConstraintGraph {
     }
 
     public List<Set<Constraint>> getIndependentPath() {
-        return this.independentPath;
+        List<Set<Constraint>> tempList = new ArrayList<>();
+        for (Set<Constraint> path : independentPath) {
+            tempList.add(Collections.unmodifiableSet(path));
+        }
+        return Collections.unmodifiableList(tempList);
     }
 
     protected void addIndependentPath(Set<Constraint> independentPath) {

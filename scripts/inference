@@ -21,7 +21,7 @@ ROOT=$(cd ${myDir}/../../ && pwd)
 
 distDir=$myDir"/../dist"
 
-libDir=$ROOT"/checker-framework-inference/lib"
+libDir=$ROOT"checker-framework-inference/lib"
 
 classpath="$distDir"/checker.jar:"$distDir"/plume.jar:"$distDir"/checker-framework-inference.jar
 

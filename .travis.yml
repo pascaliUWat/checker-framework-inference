@@ -13,6 +13,9 @@ env:
   global:
     - JDKVER=jdk8
     - THIS_REPO=checker-framework-inference
+  matrix:
+    - GROUP=cfi-tests
+    - GROUP=downstream
 
 after-script:
 - |
@@ -64,7 +67,7 @@ script:
      export JAVA_TOOL_OPTIONS=-Dfile.encoding=UTF8 &&
      export TRAVIS_REPO_SLUG=$TRAVIS_REPO_SLUG &&
      export TRAVIS_BUILD_DIR=$TRAVIS_BUILD_DIR &&
-     ./.travis-build.sh"
+     ./.travis-build.sh ${GROUP}"
 
 
 after-script:

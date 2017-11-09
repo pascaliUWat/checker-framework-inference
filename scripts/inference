@@ -17,9 +17,11 @@ then
     myDir="."
 fi
 
+ROOT=$(cd ${myDir}/../../ && pwd)
+
 distDir=$myDir"/../dist"
 
-libDir=$myDir"/../lib"
+libDir=$ROOT"/checker-framework-inference/lib"
 
 classpath="$distDir"/checker.jar:"$distDir"/plume.jar:"$distDir"/checker-framework-inference.jar
 

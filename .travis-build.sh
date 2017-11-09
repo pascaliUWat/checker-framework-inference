@@ -35,11 +35,11 @@ fi
 if [[ "${GROUP}" == "downstream" || "${GROUP}" == "all" ]]; then
 
     # Ontology test: 10 minutes
-    echo "Running: (cd $ROOT && git clone --depth 1 https://github.com/opprop/ontology.git)"
-    (cd $ROOT && git clone --depth 1 https://github.com/opprop/ontology.git)
-    echo "... done: (cd $ROOT && git clone --depth 1 https://github.com/opprop/ontology.git)"
+    echo "Running: (cd .. && git clone --depth 1 https://github.com/opprop/ontology.git)"
+    (cd .. && git clone --depth 1 https://github.com/opprop/ontology.git)
+    echo "... done: (cd .. && git clone --depth 1 https://github.com/opprop/ontology.git)"
 
-    echo "Running: (cd $ROOT/ontology && gradle build -x test && ./test-ontology.sh)"
-    (cd $ROOT/ontology && gradle build -x test && ./test-ontology.sh)
-    echo "... done: (cd $ROOT/ontology && gradle build -x test && ./test-ontology.sh)"
+    echo "Running: (cd ../ontology && gradle build -x test && ./test-ontology.sh)"
+    (cd ../ontology && gradle build -x test && ./test-ontology.sh)
+    echo "... done: (cd ../ontology && gradle build -x test && ./test-ontology.sh)"
 fi
